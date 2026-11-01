@@ -1,0 +1,137 @@
+<section class="py-5 bg-black text-white min-vh-100 tracker-viewport">
+  <div class="container pt-3">
+    
+    <!-- Encabezado de Monitor -->
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3">
+      <div>
+        <h2 class="text-warning fw-black mb-0 system-title">SISTEMA CCTV • MONITOREO DE DESPACHO</h2>
+        <span class="text-danger fw-bold small blink">● EN VIVO - CANAL DE VIGILANCIA</span>
+      </div>
+      <div class="text-end">
+        <span class="badge bg-dark border border-secondary text-info fs-6 px-3 py-2 font-monospace">12:00 AM • BATERÍA: 99%</span>
+      </div>
+    </div>
+
+    <!-- MONITOR DE RUTA (ESTILO MATRIZ FNAF) -->
+    <div class="cctv-frame p-4 mb-4 position-relative">
+      <div class="text-center mb-3">
+        <span class="hud-label text-cyan">DIAGRAMA DE AVANCE DE SECTORES</span>
+      </div>
+
+      <!-- Barra de conductos interactiva -->
+      <div class="fnaf-track-grid">
+        @for (item of steps; track item.step) {
+          <!-- Nodo de sector -->
+          <div class="track-node-wrapper" (click)="switchCam(item.camId, item.step)">
+            <div class="track-box" [class.active-node]="currentStepIndex >= item.step" [class.current-node]="currentStepIndex === item.step">
+              <span class="node-id">{{ item.camId }}</span>
+              <span class="node-name">{{ item.label }}</span>
+
+              <!-- Icono pixel de Golden Freddy ubicado en el nodo actual -->
+              @if (currentStepIndex === item.step) {
+                <img src="golden.png" alt="Repartidor" class="golden-tracker-token" />
+              }
+            </div>
+
+            <!-- Conducto de unión entre nodos -->
+            @if (!$last) {
+              <div class="track-pipe" [class.pipe-active]="currentStepIndex > item.step"></div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Control manual para avanzar estado del pedido -->
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <button class="btn btn-outline-secondary btn-sm" (click)="prevStatus()" [disabled]="currentStepIndex === 0">
+          ◀ Etapa Anterior
+        </button>
+        <button class="btn btn-warning btn-sm text-dark fw-bold px-4" (click)="nextStatus()" [disabled]="currentStepIndex === steps.length - 1">
+          Simular Avance ▶
+        </button>
+      </div>
+    </div>
+
+    <!-- PANTALLA DE CÁMARA CCTV -->
+    <div class="row g-4">
+      
+      <!-- Visor de la Cámara -->
+      <div class="col-lg-8">
+        <div class="cctv-screen position-relative p-4 rounded border border-secondary shadow">
+          <!-- Filtro de líneas CRT y Estática -->
+          <div class="scanlines"></div>
+          @if (cctvStatic) {
+            <div class="static-overlay"></div>
+          }
+
+          <!-- Marcadores de la cámara -->
+          <div class="d-flex justify-content-between align-items-center mb-3 cctv-header position-relative z-2">
+            <span class="text-success fw-bold font-monospace fs-5">FEED: [{{ currentStep.camId }}]</span>
+            <span class="text-light font-monospace small">{{ currentStep.camName }}</span>
+          </div>
+
+          <!-- Escenario de la cámara -->
+          <div class="camera-stage d-flex flex-column justify-content-center align-items-center text-center p-5 position-relative z-2">
+            <div class="display-3 mb-3">
+              @switch (currentStep.step) {
+                @case (0) { 👨‍🍳 }
+                @case (1) { 🔥 }
+                @case (2) { 📦 }
+                @case (3) { 🛵 }
+                @case (4) { 🍕 }
+              }
+            </div>
+            <h3 class="text-warning fw-bold">{{ currentStep.statusText }}</h3>
+            <p class="text-light-emphasis small max-w-md">{{ currentStep.detail }}</p>
+          </div>
+
+          <!-- Pie del visor -->
+          <div class="d-flex justify-content-between text-secondary small font-monospace pt-3 border-top border-dark position-relative z-2">
+            <span>MODO: SENSOR DE MOVIMIENTO ACTIVO</span>
+            <span>FREQ: 60Hz</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel de Datos del Destino y Cámaras -->
+      <div class="col-lg-4">
+        <div class="card bg-black border-secondary text-white p-3 mb-3">
+          <h5 class="text-warning fw-bold mb-3 border-bottom border-secondary pb-2">📍 INFORMACIÓN DE ENTREGA</h5>
+          @if (deliveryInfo) {
+            <div class="small mb-2"><span class="text-secondary">Guardia a recibir:</span> <strong class="text-light">{{ deliveryInfo.customerName }}</strong></div>
+            <div class="small mb-2"><span class="text-secondary">Destino:</span> <span class="text-light">{{ deliveryInfo.address }}</span></div>
+            <div class="small mb-2"><span class="text-secondary">Sector:</span> <span class="text-light">{{ deliveryInfo.neighborhood || 'Zona Principal' }}</span></div>
+            <div class="small mb-2"><span class="text-secondary">Contacto:</span> <span class="text-light">{{ deliveryInfo.phone }}</span></div>
+            @if (deliveryInfo.specialInstructions) {
+              <div class="p-2 bg-dark rounded border border-secondary text-warning small fst-italic mt-2">
+                "{{ deliveryInfo.specialInstructions }}"
+              </div>
+            }
+          } @else {
+            <p class="text-secondary small mb-3">No hay dirección de destino asignada.</p>
+            <a routerLink="/ordena-online" class="btn btn-outline-warning btn-sm w-100 fw-bold">Registrar Destino</a>
+          }
+        </div>
+
+        <!-- Botonera de cambio rápido de cámaras -->
+        <div class="card bg-black border-secondary text-white p-3">
+          <h6 class="text-cyan fw-bold mb-2">CANALES DISPONIBLES</h6>
+          <div class="d-grid gap-2">
+            @for (item of steps; track item.step) {
+              <button 
+                class="btn btn-sm text-start font-monospace d-flex justify-content-between"
+                [class.btn-outline-info]="selectedCam !== item.camId"
+                [class.btn-info]="selectedCam === item.camId"
+                (click)="switchCam(item.camId, item.step)">
+                <span>{{ item.camId }} - {{ item.label }}</span>
+                @if (currentStepIndex === item.step) { <span>🍕</span> }
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>

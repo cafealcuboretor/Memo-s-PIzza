@@ -1,0 +1,8 @@
+MEMO'S PIZZA — VERSIÓN LIGERA PARA DESCARGAR
+
+Se mantiene la carpeta «cambios finales», con todo el código Angular, rutas y páginas legales. Se han comprimido imágenes a WebP (referencias actualizadas), video de promoción a MP4 H.264 y audio a MP3 de menor tamaño. El GIF fnaf2.gif, no referenciado desde la aplicación, se conserva como WebP animado; fnaf.gif se conserva como GIF.
+
+Para iniciar: npm ci; npm start; visita http://localhost:4200
+Correo de contacto: memospizza@delicias.com
+
+La compilación final en tu computadora y la solución de las alertas de npm audit siguen pendientes de confirmación.

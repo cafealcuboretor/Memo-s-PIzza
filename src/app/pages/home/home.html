@@ -1,0 +1,108 @@
+<!-- Banner Hero Principal -->
+<section class="hero-pizza text-white text-center position-relative overflow-hidden d-flex flex-column justify-content-center" style="min-height: calc(100vh - 65px);">
+  <div class="container position-relative z-2 py-5">
+     <!-- Resto de tu código (título, carrusel, etc.) -->
+    <h1 class="display-3 fw-bold text-warning neon-title mb-1">MEMO'S FAMILY DINNER</h1>
+    <p class="lead mb-3 text-light">¡Donde la fantasía y la diversión cobran vida!</p>
+
+    <div id="animatronicCarousel" class="carousel slide carousel-fade mx-auto shadow-lg border border-warning rounded mb-3 position-relative" data-bs-ride="carousel" style="max-width: 1050px;">
+      <!-- Botón movido a la izquierda (start-0) con un margen un poco más amplio (m-3) -->
+      <button class="btn btn-dark btn-sm position-absolute bottom-0 start-0 m-3 z-3 border-warning text-warning fw-bold" (click)="toggleVideoMute()" style="opacity: 0.85;">
+        {{ isVideoMuted ? '🔇 Silenciado' : '🔊 Sonido Video' }}
+      </button>
+
+      <div class="carousel-inner rounded">
+        <div class="carousel-item active" data-bs-interval="4000">
+          <video id="promo-video" src="promocion.mp4" class="d-block w-100" autoplay muted loop playsinline></video>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="marquee-lights"></div>
+</section>
+
+<section class="py-5 bg-dark">
+  <div class="container">
+    
+    <div class="text-center mb-5">
+      <h2 class="text-warning fw-bold d-inline-flex align-items-center gap-2" style="letter-spacing: 2px;">
+        <span>🗞️</span> GACETA Y ARCHIVOS NOCTURNOS <span>🗞️</span>
+      </h2>
+      <p class="text-secondary small mt-1">Haz clic sobre cualquier rollo para desplegar el ejemplar</p>
+    </div>
+
+    <!-- Rejilla de 6 rollos estilo cilindro 3D -->
+    <div class="row g-5 justify-content-center">
+      @for (item of articles; track item.id) {
+        <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
+          <div class="cylinder-wrapper" (click)="openArticle(item)">
+            
+            <div class="newspaper-cylinder">
+              <!-- Borde enrollado izquierdo -->
+              <div class="cylinder-cap"></div>
+
+              <!-- Cuerpo cilíndrico del papel -->
+              <div class="cylinder-body">
+                <!-- Cuerda fina con nudo -->
+                <div class="twine-band">
+                  <div class="twine-knot"></div>
+                </div>
+
+                <!-- Impresión del titular a lo largo del rollo -->
+                <div class="cylinder-print">
+                  <div class="brand-press">MEMO'S GAZETTE</div>
+                  <div class="divider-rule"></div>
+                  <h4 class="roll-headline">{{ item.headline }}</h4>
+                  <div class="roll-meta">
+                    <span>{{ item.edition }}</span>
+                    <span>•</span>
+                    <span>{{ item.date }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Sombra simulada debajo del rollo -->
+              <div class="cylinder-shadow"></div>
+            </div>
+
+          </div>
+        </div>
+      }
+    </div>
+
+  </div>
+</section>
+
+<!-- Modal desplegable al hacer clic -->
+@if (selectedArticle) {
+  <div class="newspaper-modal-backdrop" (click)="closeArticle()">
+    <div class="newspaper-sheet p-4 p-md-5 rounded shadow-lg position-relative" (click)="$event.stopPropagation()">
+      <button type="button" class="btn-close position-absolute top-0 end-0 m-3" aria-label="Close" (click)="closeArticle()"></button>
+
+      <div class="text-center border-bottom border-dark pb-2 mb-3">
+        <h1 class="newspaper-title fw-black mb-0">MEMO'S CHRONICLE</h1>
+        <div class="d-flex justify-content-between text-uppercase small border-top border-bottom border-dark py-1 my-2">
+          <span>{{ selectedArticle.edition }}</span>
+          <span>FECHA: {{ selectedArticle.date }}</span>
+          <span>PRECIO: $0.00</span>
+        </div>
+      </div>
+
+      <div class="newspaper-body">
+        <h2 class="fw-bold text-dark mb-1">{{ selectedArticle.headline }}</h2>
+        <h5 class="text-muted fst-italic mb-3">{{ selectedArticle.subheadline }}</h5>
+        <hr class="my-3">
+        <div class="newspaper-columns">
+          @for (paragraph of selectedArticle.content; track $index) {
+            <p class="text-justify leading-relaxed mb-3">{{ paragraph }}</p>
+          }
+        </div>
+      </div>
+
+      <div class="text-center border-top border-dark pt-3 mt-4">
+        <button class="btn btn-dark btn-sm px-4 fw-semibold" (click)="closeArticle()">Enrollar de nuevo</button>
+      </div>
+    </div>
+  </div>
+}

@@ -1,0 +1,103 @@
+<section class="py-5 bg-dark text-white min-vh-100">
+  <div class="container pt-4">
+    
+    <!-- Encabezado -->
+    <div class="text-center mb-4">
+      <h1 class="display-4 fw-bold text-warning neon-text">MENÚ COMPLETO</h1>
+      <p class="text-secondary lead">Horneado artesanal listo para acompañar tu guardia</p>
+    </div>
+
+    <!-- Buscador de comida -->
+    <div class="row justify-content-center mb-4">
+      <div class="col-12 col-md-8 col-lg-6">
+        <div class="menu-search-wrapper position-relative">
+          <span class="search-icon">🔍</span>
+          <input 
+            type="text" 
+            class="form-control menu-search-input" 
+            [(ngModel)]="searchTerm" 
+            placeholder="Buscar por nombre, ingrediente o receta..."
+            autocomplete="off"
+          />
+          @if (searchTerm) {
+            <button class="clear-search-btn" (click)="clearSearch()" type="button" title="Limpiar búsqueda">✕</button>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros por categoría -->
+    <div class="d-flex justify-content-center gap-2 mb-5 flex-wrap">
+      <button class="btn btn-outline-warning px-4 fw-bold" [class.active]="activeFilter === 'todos'" (click)="setFilter('todos')">
+        🍽️ Todos
+      </button>
+      <button class="btn btn-outline-warning px-4 fw-bold" [class.active]="activeFilter === 'pizzas'" (click)="setFilter('pizzas')">
+        🍕 Pizzas
+      </button>
+      <button class="btn btn-outline-warning px-4 fw-bold" [class.active]="activeFilter === 'bebidas'" (click)="setFilter('bebidas')">
+        🥤 Bebidas
+      </button>
+      <button class="btn btn-outline-warning px-4 fw-bold" [class.active]="activeFilter === 'postres'" (click)="setFilter('postres')">
+        🧁 Postres
+      </button>
+    </div>
+
+    <!-- Catálogo de Productos -->
+    <div class="row g-4">
+      @for (item of filteredItems; track item.id) {
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100 menu-card border-secondary text-white position-relative shadow">
+            
+            @if (item.tag) {
+              <span class="position-absolute top-0 end-0 m-2 badge bg-danger fw-bold border border-light" style="z-index: 2;">
+                {{ item.tag }}
+              </span>
+            }
+
+            <!-- Imagen del Producto al 100% de cobertura -->
+            <div class="card-img-placeholder position-relative overflow-hidden">
+              @if (item.image) {
+                <img 
+                  [src]="'/' + item.image" 
+                  [alt]="item.name" 
+                  class="product-img"
+                  (error)="item.image = ''"
+                  loading="lazy"
+                />
+              } @else {
+                <div class="d-flex justify-content-center align-items-center h-100">
+                  <span class="product-emoji">{{ item.emoji }}</span>
+                </div>
+              }
+            </div>
+
+            <!-- Información -->
+            <div class="card-body d-flex flex-column justify-content-between p-4 bg-dark">
+              <div>
+                <h5 class="card-title text-warning fw-bold mb-2">{{ item.name }}</h5>
+                <p class="card-text text-light-emphasis small">{{ item.description }}</p>
+              </div>
+
+              <!-- Precio y Acción -->
+              <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top border-secondary">
+                <span class="fs-4 fw-bold text-success">${{ item.price | number:'1.2-2' }}</span>
+                <button class="btn btn-warning fw-bold text-dark btn-sm px-3" (click)="addToCart(item)">
+                  + Agregar
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      } @empty {
+        <div class="col-12 text-center py-5">
+          <span class="display-3 d-block mb-3">📡</span>
+          <h4 class="text-warning fw-bold">SIN SEÑALES EN EL RADAR</h4>
+          <p class="text-secondary small">No encontramos suministros que coincidan con "{{ searchTerm }}".</p>
+          <button class="btn btn-outline-warning btn-sm mt-2 fw-bold" (click)="clearSearch()">Mostrar todo el catálogo</button>
+        </div>
+      }
+    </div>
+
+  </div>
+</section>

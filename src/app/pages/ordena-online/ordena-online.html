@@ -1,0 +1,133 @@
+<section class="py-5 bg-dark text-white min-vh-100">
+  <div class="container pt-4">
+
+    <div class="text-center mb-5">
+      <h1 class="display-4 fw-bold text-warning neon-text">DESPACHO Y ORDEN ONLINE</h1>
+      <p class="text-secondary lead">Confirma tu ubicación para el envío de turno nocturno</p>
+    </div>
+
+    @if (!orderSuccess) {
+      <div class="row g-4 justify-content-center">
+        
+        <!-- Formulario de Entrega -->
+        <div class="col-lg-7">
+          <div class="card checkout-card p-4 shadow-lg border-secondary text-white">
+            <h4 class="text-warning fw-bold mb-4 border-bottom border-secondary pb-2">
+              📍 DATOS DE ENTREGA
+            </h4>
+
+            <form (ngSubmit)="submitOrder()">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label text-light-emphasis small fw-bold">NOMBRE COMPLETO *</label>
+                  <input type="text" class="form-control custom-input" [(ngModel)]="orderForm.customerName" name="name" placeholder="Ej. Mike Schmidt" required>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="form-label text-light-emphasis small fw-bold">TELÉFONO DE CONTACTO *</label>
+                  <input type="tel" class="form-control custom-input" [(ngModel)]="orderForm.phone" name="phone" placeholder="867 123 4567" required>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label text-light-emphasis small fw-bold">CALLE Y NÚMERO *</label>
+                  <input type="text" class="form-control custom-input" [(ngModel)]="orderForm.address" name="address" placeholder="Av. Principal #123, Oficina de Seguridad" required>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label text-light-emphasis small fw-bold">COLONIA / SECTOR</label>
+                  <input type="text" class="form-control custom-input" [(ngModel)]="orderForm.neighborhood" name="neighborhood" placeholder="Sector Centro">
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label text-light-emphasis small fw-bold">INSTRUCCIONES PARA EL REPARTIDOR</label>
+                  <textarea class="form-control custom-input" rows="3" [(ngModel)]="orderForm.specialInstructions" name="notes" placeholder="Ej. Tocar dos veces la puerta lateral, no hacer ruido fuerte..."></textarea>
+                </div>
+
+                <div class="col-12 mt-4">
+                  <button 
+                        type="button" 
+                        class="btn btn-warning w-100 fw-bold py-3 text-dark fs-5 shadow"
+                        (click)="submitOrder()">
+                        CONFIRMAR Y ENVIAR A COCINA
+                    </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Resumen de Orden -->
+        <div class="col-lg-5">
+          <div class="card checkout-card p-4 shadow-lg border-secondary text-white">
+            <h4 class="text-warning fw-bold mb-3 border-bottom border-secondary pb-2">
+              🧾 RESUMEN DE TU GUARDIA
+            </h4>
+
+            @if (cartItems.length === 0) {
+              <div class="text-center py-5">
+                <span class="display-3">📦</span>
+                <p class="text-secondary mt-3">Tu carrito está vacío.</p>
+                <a routerLink="/menu" class="btn btn-outline-warning btn-sm">Explorar Menú</a>
+              </div>
+            } @else {
+              <div class="order-items-list mb-3">
+                @for (item of cartItems; track item.id) {
+                  <div class="d-flex justify-content-between align-items-center py-2 border-bottom border-secondary-subtle">
+                    <div class="d-flex align-items-center gap-2">
+                      <span class="fs-4">{{ item.emoji || '🍕' }}</span>
+                      <div>
+                        <div class="fw-bold text-white small">{{ item.name }}</div>
+                        <div class="text-secondary smaller">Cant: {{ item.quantity || 1 }} × ${{ item.price | number:'1.2-2' }}</div>
+                      </div>
+                    </div>
+                    <span class="text-success fw-bold">${{ (item.price * (item.quantity || 1)) | number:'1.2-2' }}</span>
+                  </div>
+                }
+              </div>
+
+              <div class="border-top border-secondary pt-3">
+                <div class="d-flex justify-content-between text-secondary mb-1">
+                  <span>Subtotal:</span>
+                  <span>${{ subtotal | number:'1.2-2' }}</span>
+                </div>
+                <div class="d-flex justify-content-between text-secondary mb-2">
+                  <span>Envío nocturno:</span>
+                  <span>${{ deliveryFee | number:'1.2-2' }}</span>
+                </div>
+                <div class="d-flex justify-content-between fs-4 fw-bold text-warning border-top border-secondary pt-2">
+                  <span>TOTAL:</span>
+                  <span class="text-success">${{ total | number:'1.2-2' }}</span>
+                </div>
+              </div>
+            }
+
+          </div>
+        </div>
+
+      </div>
+    } @else {
+      <!-- Pantalla de confirmación -->
+      <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+          <div class="card checkout-card p-5 border-success shadow-lg text-white">
+            <div class="display-1 mb-3">🍕📦</div>
+            <h2 class="text-success fw-bold mb-2">¡ORDEN RECIBIDA EN COCINA!</h2>
+            <p class="text-secondary lead">Tu pedido ha sido asignado al horno con código:</p>
+            <div class="order-token py-2 px-4 d-inline-block fw-bold fs-3 text-warning border border-warning rounded mb-4">
+              {{ orderId }}
+            </div>
+            <p class="text-light mb-4">
+              Nuestros pizzeros ya están horneando tu orden. Monitorea el progreso de preparación y el despacho en tiempo real.
+            </p>
+            <div>
+              <button class="btn btn-warning px-5 py-3 fw-bold text-dark fs-5" (click)="goToTracker()">
+                📹 RASTREAR EN TRACKER CCTV
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+  </div>
+</section>

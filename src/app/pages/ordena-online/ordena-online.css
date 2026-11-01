@@ -1,0 +1,45 @@
+.neon-text {
+  text-shadow: 0 0 10px rgba(255, 193, 7, 0.7), 0 0 20px rgba(255, 193, 7, 0.4);
+}
+
+.checkout-card {
+  background-color: #17191c;
+  border-radius: 12px;
+}
+
+.custom-input {
+  background-color: #23272c;
+  border: 1px solid #495057;
+  color: #fff;
+}
+
+.custom-input:focus {
+  background-color: #282c32;
+  border-color: #ffc107;
+  color: #fff;
+  box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+}
+
+.custom-input::placeholder {
+  color: #6c757d;
+}
+
+.order-items-list {
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.order-token {
+  background-color: #0b0c0e;
+  letter-spacing: 2px;
+}
+
+.pulse-confirm {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.pulse-confirm:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 193, 7, 0.4);
+}

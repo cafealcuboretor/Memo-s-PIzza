@@ -1,0 +1,62 @@
+/* Contenedor del telón interactivo */
+.theater-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none; /* Evita que bloquee los clics después de abrirse */
+  animation: hide-overlay 0s ease-in 2.5s forwards;
+}
+
+/* Textura de tela con pliegues (protuberancias onduladas) */
+.curtain-panel {
+  position: absolute;
+  top: 0; 
+  width: 50%; 
+  height: 100%;
+  background: repeating-linear-gradient(to right, #3d0000 0%, #8b0000 4%, #3d0000 8%);
+  box-shadow: 0 0 20px rgba(0,0,0,0.9);
+}
+
+/* División izquierda y derecha */
+.curtain-left {
+  left: 0;
+  border-right: 4px solid #1a0000;
+  animation: open-left 1.2s ease-in-out 1.2s forwards;
+}
+
+.curtain-right {
+  right: 0;
+  border-left: 4px solid #1a0000;
+  animation: open-right 1.2s ease-in-out 1.2s forwards;
+}
+
+/* Logo brillando sobre el telón cerrado */
+.curtain-logo-wrapper {
+  position: relative;
+  z-index: 10000;
+  animation: fade-out-logo 0.4s ease-in 1s forwards;
+}
+
+.curtain-logo {
+  max-width: 300px !important;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 25px rgba(255, 204, 0, 1));
+}
+
+/* Movimientos fluidos */
+@keyframes open-left { 
+  100% { transform: translateX(-100%); } 
+}
+@keyframes open-right { 
+  100% { transform: translateX(100%); } 
+}
+@keyframes fade-out-logo { 
+  100% { opacity: 0; transform: scale(1.3); } 
+}
+@keyframes hide-overlay { 
+  100% { visibility: hidden; } 
+}

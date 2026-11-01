@@ -1,0 +1,43 @@
+<section class="py-5 bg-dark-theme" style="min-height: 100vh;">
+  <div class="container pt-4">
+    
+    <h2 class="text-center text-warning fw-bold mb-5 neon-title">
+      MENÚ DE OFERTAS
+    </h2>
+    
+    <div class="row g-4 justify-content-center">
+      @for (item of ofertas; track item.id) {
+        <div class="col-md-6 col-lg-6">
+          <div class="promo-card d-flex rounded-4 overflow-hidden shadow-lg h-100">
+            
+            <!-- Mitad Izquierda: Detalles y Acción -->
+            <div class="p-4 d-flex flex-column justify-content-between w-50 content-side">
+              <div>
+                <span class="badge {{ item.badgeColor }} mb-2 px-2 py-1 rounded-2 text-uppercase fw-bold badge-custom">
+                  {{ item.badgeText }}
+                </span>
+                <h5 class="text-warning fw-bold mb-2 title-promo">{{ item.name }}</h5>
+                <p class="text-secondary small mb-3 desc-promo">{{ item.description }}</p>
+              </div>
+              
+              <div class="pt-2">
+                <div class="price-tag fw-bold mb-3">${{ item.price | number:'1.2-2' }}</div>
+                <button class="btn btn-warning w-100 fw-bold border-0 text-dark rounded-2 py-2 btn-add" (click)="addToCart(item)">
+                  Agregar al Carrito
+                </button>
+              </div>
+            </div>
+
+            <!-- Mitad Derecha: Imagen con recorte y overlay -->
+            <div class="w-50 promo-img-wrapper">
+              <img [src]="item.image" [alt]="item.name" class="promo-img" loading="lazy" />
+              <div class="img-gradient-overlay"></div>
+            </div>
+
+          </div>
+        </div>
+      }
+    </div>
+
+  </div>
+</section>

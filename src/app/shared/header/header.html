@@ -1,0 +1,107 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-warning sticky-top px-3">
+  <div class="container-fluid">
+    
+    <!-- Logo / Nombre -->
+    <a class="navbar-brand text-warning fw-bold fs-4" routerLink="/">
+      🍕 MEMO'S PIZZA
+    </a>
+
+    <!-- Agrupación Móvil: Botón Carrito + Menú Hamburguesa (Visible solo en celulares) -->
+    <div class="d-flex align-items-center gap-3 d-lg-none">
+      
+      <!-- Botón Carrito Móvil (Fijo arriba) -->
+      <a routerLink="/carrito" class="btn btn-info text-white fw-bold d-flex align-items-center position-relative px-3 py-1 shadow-sm" style="background-color: #0088cc; border: none; border-radius: 8px;">
+        <span class="fs-5">🛒</span>
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light" style="font-size: 0.75rem;">
+          {{ cartCount }}
+        </span>
+      </a>
+
+      <!-- Botón de Menú Hamburguesa -->
+      <button class="navbar-toggler border-warning text-warning" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+
+    <!-- Contenido del Menú Desplegable -->
+    <div class="collapse navbar-collapse justify-content-end" id="mainNavbar">
+      <ul class="navbar-nav align-items-lg-center gap-2 mb-2 mb-lg-0 py-3 py-lg-0">
+        
+        <li class="nav-item">
+          <a class="nav-link text-white fw-semibold" routerLink="/ordena-online" routerLinkActive="text-warning">ORDENA ONLINE</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white fw-semibold" routerLink="/menu" routerLinkActive="text-warning">MENÚ</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white fw-semibold" routerLink="/promos" routerLinkActive="text-warning">PROMOS</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white fw-semibold" routerLink="/tracker" routerLinkActive="text-warning">TRACKER</a>
+        </li>
+
+        <li class="nav-item d-none d-lg-block border-start border-secondary mx-2" style="height: 35px;"></li>
+
+        <!-- Configuración / Audio -->
+        <li class="nav-item dropdown">
+          <button class="btn btn-dark text-warning border-secondary btn-sm d-flex align-items-center gap-1 w-100 justify-content-center py-2" data-bs-toggle="dropdown" aria-expanded="false">
+            <span>⚙️</span> <span class="d-lg-none">Configuración</span>
+          </button>
+          
+          <!-- Menú desplegable de Ajustes -->
+          <div class="dropdown-menu dropdown-menu-end bg-dark border border-warning p-3 mt-2 shadow-lg" style="min-width: 250px;">
+            <h6 class="dropdown-header text-warning fw-bold px-0 fs-6 border-bottom border-secondary pb-2 mb-3">AJUSTES NOCTURNOS</h6>
+            
+            <!-- Las condiciones solo están disponibles desde Ajustes, con sesión iniciada. -->
+            @if (isLoggedIn) {
+              <a routerLink="/ajustes" class="btn btn-outline-warning btn-sm w-100 text-start mb-3">👤 Mi cuenta y ajustes</a>
+              <a routerLink="/ajustes" class="dropdown-item text-warning small mb-3 px-1">📄 Consultar Términos y Condiciones</a>
+              <hr class="border-secondary">
+            }
+
+            <!-- Switch de Música -->
+            <div class="form-check form-switch mb-3">
+              <input class="form-check-input bg-secondary border-warning" type="checkbox" role="switch" id="musicToggle" (change)="toggleMusic($event)">
+              <label class="form-check-label text-white fw-semibold" for="musicToggle">Música de Fondo</label>
+            </div>
+            
+            <!-- Slider de Volumen -->
+            <div class="mb-1">
+              <label for="volumeSlider" class="form-label text-white d-flex justify-content-between mb-1">
+                <span class="small">Volumen</span>
+                <span class="text-warning small fw-bold">{{ volumeText }}</span>
+              </label>
+              <input type="range" class="form-range" id="volumeSlider" min="0" max="1" step="0.01" value="0.05" (input)="changeVolume($event)">
+            </div>
+          </div>
+        </li>
+        
+        <!-- Cambia de Iniciar sesión a Mi cuenta cuando se registra el cliente. -->
+        <li class="nav-item">
+          @if (isLoggedIn) {
+            <a class="nav-link text-warning fw-semibold d-flex align-items-center gap-1 justify-content-center py-2" routerLink="/ajustes">
+              <span>👤</span> MI CUENTA
+            </a>
+          } @else {
+            <a class="nav-link text-white fw-semibold d-flex align-items-center gap-1 justify-content-center py-2" routerLink="/login">
+              <span>👤</span> INICIAR SESIÓN
+            </a>
+          }
+        </li>
+
+        <!-- Botón Carrito Escritorio (Oculto en móviles) -->
+        <li class="nav-item d-none d-lg-block">
+          <a routerLink="/carrito" class="btn btn-info text-white fw-bold d-flex flex-column align-items-center position-relative px-4 py-1" style="background-color: #0088cc; border: none;">
+            <span class="fs-4 mb-n1" style="line-height: 1;">🛒</span>
+            <span class="small">CARRITO</span>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light fs-6 mt-1 ms-n2">
+              {{ cartCount }}
+            </span>
+          </a>
+        </li>
+
+      </ul>
+    </div>
+
+  </div>
+</nav>

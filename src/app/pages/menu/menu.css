@@ -1,0 +1,104 @@
+.neon-text {
+  text-shadow: 0 0 10px rgba(255, 193, 7, 0.7), 0 0 20px rgba(255, 193, 7, 0.4);
+}
+
+/* Buscador de Comida */
+.menu-search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 16px;
+  font-size: 1.05rem;
+  color: #adb5bd;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.menu-search-input {
+  background-color: #111418 !important;
+  border: 1.5px solid #2d333b !important;
+  border-radius: 28px;
+  padding: 12px 46px 12px 46px;
+  color: #ffffff !important;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.menu-search-input::placeholder {
+  color: #6c757d;
+}
+
+.menu-search-input:focus {
+  border-color: #ffc107 !important;
+  box-shadow: 0 0 15px rgba(255, 193, 7, 0.3) !important;
+  outline: none;
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 14px;
+  background: transparent;
+  border: none;
+  color: #adb5bd;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 50%;
+  transition: color 0.2s ease;
+}
+
+.clear-search-btn:hover {
+  color: #ff4d4d;
+}
+
+/* Tarjetas */
+.menu-card {
+  background-color: #1a1d20;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.menu-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(255, 193, 7, 0.2) !important;
+  border-color: #ffc107 !important;
+}
+
+/* Contenedor e Imagen abarcando el 100% */
+.card-img-placeholder {
+  background-color: #0b0c10;
+  height: 220px;
+  width: 100%;
+}
+
+.product-img {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: cover !important;
+  object-position: center;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.menu-card:hover .product-img {
+  transform: scale(1.06);
+}
+
+.product-emoji {
+  font-size: 4.5rem;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+}
+
+.btn-outline-warning.active {
+  background-color: #ffc107;
+  color: #111 !important;
+  box-shadow: 0 0 12px rgba(255, 193, 7, 0.5);
+}

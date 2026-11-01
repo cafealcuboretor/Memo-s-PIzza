@@ -1,0 +1,4 @@
+.terms-modal-backdrop { position: fixed; inset: 0; z-index: 1100; display:flex; align-items: center; justify-content:center; background:rgba(0,0,0,.86); padding: 12px; }
+.terms-modal-card { width:min(920px,100%); max-height:94dvh; display:flex; flex-direction:column; overflow:hidden; }
+.terms-modal-scroll { overflow:auto; flex:1; min-height:0; overscroll-behavior:contain; }
+.terms-modal-card .form-check-label { font-size:.94rem; }

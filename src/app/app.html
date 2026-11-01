@@ -1,0 +1,51 @@
+<!-- Telón Global Controlado por el Router -->
+@if (isAnimating) {
+  <div class="theater-overlay">
+    <div class="curtain-panel curtain-left"></div>
+    <div class="curtain-panel curtain-right"></div>
+    
+    <!-- Esta es la parte que te faltaba en la foto -->
+    <div class="curtain-logo-wrapper">
+      <img src="memo-logo.webp" alt="Memo's Family Dinner" class="curtain-logo">
+    </div>
+  </div>
+}
+
+<!-- Notificaciones Globales Arriba a la Izquierda -->
+<div class="fazbear-toast-container">
+  @for (alert of notificationService.alerts$ | async; track alert.id) {
+    <div class="fazbear-toast type-{{ alert.type }}" (click)="notificationService.remove(alert.id)">
+      <div class="fazbear-toast-header">
+        <div class="d-flex align-items-center gap-2">
+          <span class="fazbear-beacon beacon-{{ alert.type }}"></span>
+          <span class="text-warning fw-bold">{{ alert.title }}</span>
+        </div>
+        <span class="close-x">✕</span>
+      </div>
+      <div class="fazbear-toast-body">
+        {{ alert.message }}
+      </div>
+    </div>
+  }
+</div>
+
+<app-header></app-header>
+
+<main class="bg-dark">
+  <router-outlet></router-outlet>
+</main>
+
+<app-footer></app-footer>
+
+<!-- Música Global -->
+<audio id="global-music" loop>
+  <source src="song.mp3" type="audio/mpeg">
+</audio>
+@if (cookieDecision === null) {
+  <div role="dialog" aria-label="Preferencias de cookies" class="position-fixed bottom-0 start-0 end-0 p-3 bg-black text-white border-top border-warning" style="z-index:1050">
+    <div class="container d-flex flex-column flex-md-row align-items-md-center gap-3 justify-content-between">
+      <p class="mb-0 small">Usamos almacenamiento necesario para carrito y sesión de demostración. Puedes aceptar o rechazar cookies opcionales. <a routerLink="/legal/privacidad" class="text-warning">Aviso de privacidad</a>.</p>
+      <div class="d-flex gap-2"><button class="btn btn-outline-light btn-sm" (click)="chooseCookies(false)">Rechazar opcionales</button><button class="btn btn-warning btn-sm" (click)="chooseCookies(true)">Aceptar opcionales</button></div>
+    </div>
+  </div>
+}

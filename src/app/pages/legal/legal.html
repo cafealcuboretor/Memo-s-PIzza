@@ -1,0 +1,59 @@
+<section class="bg-dark text-white py-5 min-vh-100">
+  <div class="container" style="max-width: 960px; line-height: 1.75;">
+    <a routerLink="/" class="text-warning text-decoration-none">← Regresar a Memo's Pizza</a>
+    <h1 class="text-warning fw-bold mt-4 mb-2">Información legal y políticas comerciales</h1>
+    <p class="text-secondary small mb-4">Memo's Pizza · Actualización: 29 de octubre de 2026</p>
+
+    @if (section === 'aviso') {
+      <h2 class="h4 text-warning">Aviso legal e identificación del proveedor</h2>
+      <p><strong>Nombre comercial:</strong> Memo's Pizza / Memo's Family Dinner.<br>
+      <strong>Razón social:</strong> Memo's Pizza Entretenimiento y Alimentos, S.A. de C.V.<br>
+      <strong>Domicilio:</strong> Av. Principal núm. 1987, Nuevo Laredo, Tamaulipas, México.<br>
+      <strong>Correo de contacto:</strong> <a href="mailto:memospizza@delicias.com" class="text-warning">memospizza@delicias.com</a>.<br>
+      <strong>Teléfono:</strong> 55-202-1983.<br>
+      <strong>Horario anunciado:</strong> de 10:00 a 22:00 horas, sujeto a cambios comunicados por el establecimiento.</p>
+      <p>En Memo's Pizza buscamos ofrecer información clara sobre nuestros productos y condiciones de compra. Los pedidos deberán ser realizados por personas mayores de edad o bajo autorización y supervisión de sus representantes legales.</p>
+      <p>Las condiciones completas de contratación se muestran al crear una cuenta. Los clientes registrados pueden consultarlas desde <strong>Mi cuenta → Ajustes → Términos y Condiciones</strong>.</p>
+    }
+
+    @if (section === 'devoluciones') {
+      <h2 class="h4 text-warning">Política de cancelaciones, devoluciones y garantías</h2>
+      <p>Nuestro compromiso es entregar los productos solicitados en las condiciones de calidad ofrecidas. Si recibes un pedido incorrecto, incompleto o en mal estado, repórtalo tan pronto como sea posible, indicando el nombre del titular, la referencia de la orden, la fecha y una descripción del problema.</p>
+      <p>Las cancelaciones solicitadas antes de iniciar la preparación serán revisadas según el estado de la orden. Debido a la naturaleza perecedera de los alimentos preparados, las solicitudes posteriores se evaluarán considerando el producto, la incidencia y las disposiciones legales aplicables.</p>
+      <p>En las operaciones sujetas a las disposiciones de contratación a distancia, se respetarán los derechos de revocación y los plazos legales que correspondan. En ningún caso se condicionan o eliminan los derechos irrenunciables de las personas consumidoras. Cuando proceda, podrá acordarse reposición, corrección del pedido o devolución de los importes pertinentes.</p>
+    }
+
+    @if (section === 'promociones') {
+      <h2 class="h4 text-warning">Política de promociones y ofertas</h2>
+      <p>Las promociones de Memo's Pizza se publican con una descripción de los productos incluidos, vigencia, precio aplicable y restricciones especiales. Su disponibilidad podrá limitarse por horarios, zonas de entrega o existencias, siempre que dichas condiciones se informen claramente al consumidor.</p>
+      <p>Los cupones y descuentos no se acumulan entre sí, salvo que la oferta correspondiente lo autorice. Los precios anunciados como anteriores deberán corresponder a precios verificables y el total de compra será mostrado antes de confirmar la operación.</p>
+      <p>En caso de diferencias entre una publicidad y el importe final, el cliente podrá comunicarse con el equipo de atención para solicitar aclaración conforme a la legislación aplicable.</p>
+    }
+
+    @if (section === 'atencion') {
+      <h2 class="h4 text-warning">Atención a clientes y reclamaciones</h2>
+      <p>Para dudas sobre productos, entregas, cancelaciones o aclaraciones de un pedido, comunícate al <strong>55-202-1983</strong> o escribe a <a href="mailto:memospizza@delicias.com" class="text-warning">memospizza@delicias.com</a>.</p>
+      <p>Al presentar una solicitud, incluye tu nombre, una referencia de la orden y el detalle de lo ocurrido. Nuestro objetivo es emitir una primera respuesta dentro de 48 horas hábiles desde la recepción de la reclamación a través de un canal habilitado.</p>
+      <p>Si una controversia no logra resolverse de forma directa, el consumidor podrá acudir a la Procuraduría Federal del Consumidor (PROFECO) y utilizar los mecanismos de orientación o conciliación que resulten procedentes.</p>
+    }
+
+    @if (section === 'privacidad') {
+      <h2 class="h4 text-warning">Aviso de privacidad integral</h2>
+      <p><strong>Responsable:</strong> Memo's Pizza Entretenimiento y Alimentos, S.A. de C.V., con domicilio de contacto en Av. Principal núm. 1987, Nuevo Laredo, Tamaulipas, México.</p>
+      <p><strong>Datos tratados:</strong> nombre, correo electrónico y contraseña para registro y acceso; nombre del destinatario, teléfono, domicilio, colonia e instrucciones especiales para organizar la entrega. Los datos se utilizan para la administración de la cuenta, la preparación de pedidos, la comunicación con el cliente y la atención de solicitudes.</p>
+      <p>Esta versión de la tienda conserva registros de cuenta y determinadas preferencias en el almacenamiento local del navegador. Por ello, no deben introducirse datos bancarios, información sensible ni contraseñas que se utilicen en otros servicios. El procesamiento de tarjetas en línea no está habilitado.</p>
+      <p><strong>Derechos ARCO:</strong> para solicitar acceso, rectificación, cancelación u oposición sobre datos personales, así como plantear dudas sobre su tratamiento, utiliza el correo <a href="mailto:memospizza@delicias.com" class="text-warning">memospizza@delicias.com</a> e indica el derecho que deseas ejercer, tu nombre y la información necesaria para identificar la solicitud. El trámite deberá atenderse en los términos de la legislación de protección de datos personales aplicable.</p>
+      <p><strong>Cookies y preferencias:</strong> las opciones esenciales de navegación permiten utilizar las funciones básicas del sitio. Las preferencias de cookies no esenciales se ofrecen de forma separada y pueden aceptarse o rechazarse. Las vistas CCTV del seguimiento son representaciones digitales y no implican videovigilancia en vivo de personas usuarias.</p>
+    }
+
+    @if (section === 'seguridad') {
+      <h2 class="h4 text-warning">Propiedad intelectual, consentimiento y seguridad</h2>
+      <p>Los textos originales, la programación propia y el diseño de Memo's Pizza están sujetos a la protección que corresponda conforme a las leyes aplicables. Las obras, marcas, música, imágenes y personajes de terceros pertenecen a sus respectivos titulares y cualquier uso comercial requiere los derechos o autorizaciones pertinentes. Memo's Pizza no afirma representar ni estar afiliada a franquicias ajenas.</p>
+      <p>La aceptación de los Términos y Condiciones se solicita durante la creación de la cuenta. En el proceso de confirmación de pedido también se pide una manifestación expresa sobre las condiciones comerciales y el Aviso de Privacidad.</p>
+      <p>La seguridad de los pagos y los datos exige medidas proporcionales al servicio prestado. En la versión actual, el pago con tarjeta no procesa cargos ni solicita números bancarios. La autenticación y el resguardo de información personal deberán migrarse a una infraestructura segura antes de la operación comercial con clientes reales.</p>
+    }
+
+    <hr class="border-secondary mt-5">
+    <p class="text-secondary small">Si tienes dudas sobre nuestras políticas, utiliza los datos de contacto incluidos en este sitio. Tus derechos como consumidor se mantienen conforme a la legislación aplicable.</p>
+  </div>
+</section>

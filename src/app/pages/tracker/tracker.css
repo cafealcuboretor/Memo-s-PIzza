@@ -1,0 +1,163 @@
+/* Paleta Neón FNAF */
+.text-cyan {
+  color: #00e5ff !important;
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.7);
+}
+
+.system-title {
+  letter-spacing: 2px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.blink {
+  animation: blink-anim 1s infinite;
+}
+
+@keyframes blink-anim {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+/* Marco de la cuadrícula de conductos (Inspirado en la imagen 1) */
+.cctv-frame {
+  background-color: #050709;
+  border: 4px solid #142028;
+  border-radius: 8px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9), 0 0 15px rgba(0, 229, 255, 0.15);
+}
+
+.hud-label {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.85rem;
+  letter-spacing: 3px;
+  font-weight: bold;
+}
+
+/* Barra de avance con estilo de conductos FNAF */
+.fnaf-track-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  overflow-x: auto;
+  padding: 20px 10px;
+}
+
+.track-node-wrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.track-node-wrapper:last-child {
+  flex: 0;
+}
+
+/* Cuadros de nodo idénticos a los del mapa */
+.track-box {
+  position: relative;
+  width: 72px;
+  height: 64px;
+  border: 3px solid #1d4b5c;
+  background-color: #04080b;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  z-index: 3;
+}
+
+.track-box:hover {
+  border-color: #00e5ff;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
+}
+
+.active-node {
+  border-color: #00e5ff;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+}
+
+.current-node {
+  border-color: #ffc107 !important;
+  box-shadow: 0 0 15px rgba(255, 193, 7, 0.8) !important;
+}
+
+.node-id {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.75rem;
+  font-weight: 900;
+  color: #00e5ff;
+}
+
+.node-name {
+  font-size: 0.6rem;
+  color: #adb5bd;
+  letter-spacing: 1px;
+}
+
+/* Conductos rectangulares huecos entre nodos */
+.track-pipe {
+  height: 10px;
+  flex-grow: 1;
+  background-color: #060d12;
+  border-top: 2px solid #1d4b5c;
+  border-bottom: 2px solid #1d4b5c;
+  margin: 0 -2px;
+  transition: all 0.3s ease;
+}
+
+.pipe-active {
+  border-color: #00e5ff;
+  background-color: rgba(0, 229, 255, 0.2);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+}
+
+/* Icono pixel de Golden Freddy */
+.golden-tracker-token {
+  position: absolute;
+  top: -24px;
+  width: 38px;
+  height: 38px;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 6px rgba(255, 204, 0, 0.9));
+  animation: bob-head 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes bob-head {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-5px); }
+}
+
+/* Pantalla de la cámara CCTV */
+.cctv-screen {
+  background-color: #080c10;
+  min-height: 360px;
+  overflow: hidden;
+}
+
+.camera-stage {
+  min-height: 220px;
+}
+
+/* Líneas de escaneo de monitor de tubo CRT */
+.scanlines {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%);
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 4;
+}
+
+/* Ruido blanco cuando cambia de canal */
+.static-overlay {
+  position: absolute;
+  inset: 0;
+  background: repeating-radial-gradient(#000 0 0.0001%, #fff 0 0.0002%) 50% 0/2500px 2500px,
+              repeating-conic-gradient(#000 0 0.0001%, #fff 0 0.0002%) 50% 50%/2500px 2500px;
+  background-blend-mode: difference;
+  opacity: 0.3;
+  z-index: 5;
+  pointer-events: none;
+}

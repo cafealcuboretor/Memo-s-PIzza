@@ -1,0 +1,220 @@
+<section class="py-5 bg-dark text-white min-vh-100">
+  <div class="container pt-3">
+    <div class="text-center mb-5">
+      <h1 class="display-4 fw-bold text-warning neon-title">TU ORDEN NOCTURNA</h1>
+      <p class="lead">Asegúrate de llevar todo lo necesario para sobrevivir al turno...</p>
+    </div>
+
+    <div class="row g-5">
+      <!-- Lista de Productos -->
+      <div class="col-lg-8">
+        <div class="card bg-secondary text-white border-warning shadow-lg">
+          
+          <!-- Encabezado adaptable -->
+          <div class="card-header bg-black border-warning border-bottom border-3 p-3 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
+            <h4 class="mb-0 text-warning fw-bold text-center text-sm-start">Artículos en tu orden ({{ cartItems.length }})</h4>
+            @if (cartItems.length > 0) {
+              <button class="btn btn-outline-danger btn-sm fw-bold pulse-danger w-100 w-sm-auto" (click)="clearCart()">
+                🗑️ Vaciar Todo
+              </button>
+            }
+          </div>
+
+          <div class="card-body p-0">
+            @if (cartItems.length > 0) {
+              <div class="list-group list-group-flush">
+                @for (item of cartItems; track item.id) {
+                  <!-- Fila del producto -->
+                  <div class="list-group-item bg-secondary text-white border-bottom border-dark d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between py-4 px-3 gap-3">
+                    
+                    <!-- Imagen y Nombre -->
+                    <div class="d-flex align-items-center flex-grow-1 w-100">
+                      <div class="fs-1 me-3 bg-dark rounded p-2 border border-secondary text-center flex-shrink-0" style="min-width: 65px;">{{ item.emoji }}</div>
+                      <div class="flex-grow-1 overflow-hidden">
+                        <h5 class="fw-bold mb-1 fs-5 text-truncate">{{ item.name }}</h5>
+                        <p class="mb-0 text-warning fw-bold fs-6">${{ item.price | number:'1.2-2' }}</p>
+                      </div>
+                    </div>
+                    
+                    <!-- Controles -->
+                    <div class="d-flex align-items-center justify-content-between justify-content-md-end w-100 w-md-auto gap-3">
+                      <div class="d-flex align-items-center bg-dark rounded p-1 border border-secondary">
+                        <button class="btn btn-outline-light btn-sm rounded-circle border-0 fw-bold px-3" (click)="decreaseQuantity(item)">-</button>
+                        <span class="mx-3 fw-bold fs-5">{{ item.quantity }}</span>
+                        <button class="btn btn-outline-light btn-sm rounded-circle border-0 fw-bold px-3" (click)="increaseQuantity(item)">+</button>
+                      </div>
+                      <button class="btn btn-danger pulse-danger fw-bold px-3 py-2" (click)="removeItem(item)" title="Eliminar">🗑️</button>
+                    </div>
+
+                  </div>
+                }
+              </div>
+            } @else {
+              <div class="text-center py-5 px-3">
+                <span class="fs-1 d-block mb-3" style="font-size: 4rem !important;">🕸️</span>
+                <h3>Tu carrito está tan vacío como la pizzería a las 3 AM.</h3>
+                <a routerLink="/menu" class="btn btn-warning mt-4 fw-bold fs-5 pulse-btn">🍕 Ir al Menú</a>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna Lateral: Destino + Ticket de Compra -->
+      <div class="col-lg-4">
+        <div class="sticky-summary d-flex flex-column gap-4">
+
+          <!-- Tarjeta de Destino Registrado -->
+          <div class="card bg-black text-white border-warning shadow-lg">
+            <div class="card-header bg-warning text-dark fw-bold py-2 px-3 d-flex justify-content-between align-items-center">
+              <span>📍 DIRECCIÓN DE ENTREGA</span>
+              @if (deliveryInfo) {
+                <button 
+                  type="button" 
+                  class="btn btn-danger btn-sm fw-bold py-0 px-2" 
+                  style="font-size: 0.75rem;" 
+                  (click)="removeDelivery()">
+                  🗑️ Eliminar
+                </button>
+              }
+            </div>
+            <div class="card-body p-3 small">
+              @if (deliveryInfo) {
+                <div class="mb-2">
+                  <span class="text-secondary d-block">Destinatario:</span>
+                  <strong class="text-warning fs-6">{{ deliveryInfo.customerName }}</strong>
+                </div>
+                <div class="mb-2">
+                  <span class="text-secondary d-block">Ubicación:</span>
+                  <span class="text-light">{{ deliveryInfo.address }}</span>
+                  @if (deliveryInfo.neighborhood) {
+                    <span class="text-muted d-block">Col. {{ deliveryInfo.neighborhood }}</span>
+                  }
+                </div>
+                <div class="mb-2">
+                  <span class="text-secondary d-block">Contacto:</span>
+                  <span class="text-light">{{ deliveryInfo.phone }}</span>
+                </div>
+                @if (deliveryInfo.specialInstructions) {
+                  <div class="p-2 bg-dark rounded border border-secondary mt-2">
+                    <span class="text-warning d-block smaller fw-bold">Instrucciones:</span>
+                    <span class="text-light-emphasis fst-italic">"{{ deliveryInfo.specialInstructions }}"</span>
+                  </div>
+                }
+              } @else {
+                <p class="text-secondary mb-3">No has asignado dirección de entrega para tu guardia.</p>
+                <a routerLink="/ordena-online" class="btn btn-outline-warning btn-sm w-100 fw-bold">
+                  Definir Destino
+                </a>
+              }
+            </div>
+          </div>
+
+          <!-- Ticket de Compra -->
+          <div class="card bg-black text-white border-danger shadow-lg">
+            <div class="card-header bg-danger border-0 p-3">
+              <h4 class="mb-0 text-white fw-bold text-center">TICKET DE COMPRA</h4>
+            </div>
+            <div class="card-body p-4">
+              <div class="d-flex justify-content-between mb-3 fs-5">
+                <span class="text-light">Subtotal:</span>
+                <span class="fw-bold">${{ subtotal | number:'1.2-2' }}</span>
+              </div>
+              <div class="d-flex justify-content-between mb-3 fs-5">
+                <span class="text-light">Envío (Riesgo Alto):</span>
+                <span class="fw-bold text-danger">${{ (cartItems.length > 0 ? costoEnvio : 0) | number:'1.2-2' }}</span>
+              </div>
+              
+              <hr class="border-secondary my-4">
+              
+              <div class="d-flex justify-content-between mb-4 fs-3 fw-bold">
+                <span class="text-warning">TOTAL:</span>
+                <span class="text-success">${{ (cartItems.length > 0 ? total : 0) | number:'1.2-2' }}</span>
+              </div>
+              
+              <button 
+                type="button"
+                class="btn btn-warning w-100 fw-bold fs-4 pulse-btn mb-3 py-2 text-dark" 
+                [disabled]="cartItems.length === 0"
+                (click)="openPaymentModal()">
+                PAGAR AHORA
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODAL SIMULADO DE PAGO (ESTILO EXACTO DE TU IMAGEN) -->
+@if (showPaymentModal) {
+  <div class="payment-modal-backdrop" (click)="closePaymentModal()">
+    <div class="payment-modal-card p-4 text-white position-relative" (click)="$event.stopPropagation()">
+      
+      <!-- Encabezado con título e icono -->
+      <div class="d-flex justify-content-between align-items-center border-bottom border-secondary border-opacity-50 pb-3 mb-3">
+        <h4 class="text-warning fw-bold mb-0 d-flex align-items-center gap-2">
+          <span>💳</span> TERMINAL DE PAGO NOCTURNO
+        </h4>
+        <button type="button" class="btn-close btn-close-white" (click)="closePaymentModal()" [disabled]="isProcessing"></button>
+      </div>
+
+      <div class="text-uppercase text-secondary small fw-bold mb-2" style="font-size: 0.72rem; letter-spacing: 0.5px;">
+        SELECCIONA EL MÉTODO DE PAGO:
+      </div>
+
+      <!-- Selector de métodos -->
+      <div class="d-flex gap-3 mb-3">
+        <button 
+          type="button" 
+          class="btn btn-method flex-fill" 
+          [class.active-method]="paymentMethod === 'efectivo'"
+          (click)="paymentMethod = 'efectivo'">
+          💵 Efectivo
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-method flex-fill" 
+          [class.active-method]="paymentMethod === 'tarjeta'"
+          (click)="paymentMethod = 'tarjeta'">
+          💳 Tarjeta
+        </button>
+      </div>
+
+      <!-- Detalle si es Efectivo -->
+      @if (paymentMethod === 'efectivo') {
+        <div class="cash-notice-box mb-3 shadow-sm">
+          <p class="mb-2">
+            <strong>Cobro en puerta:</strong> Pagarás en efectivo al repartidor al recibir tu pedido.
+          </p>
+          <div class="total-cash-text">
+            Monto total a preparar: ${{ total | number:'1.2-2' }}
+          </div>
+        </div>
+      }
+
+      @if (paymentMethod === 'tarjeta') {
+        <div class="alert alert-warning text-dark">El pago con tarjeta no está habilitado por el momento. No ingreses datos bancarios: este método no generará ningún cargo.</div>
+      }
+      <div class="form-check my-3">
+        <input class="form-check-input" type="checkbox" id="acepta-legal" [(ngModel)]="acceptedLegal">
+        <label class="form-check-label" for="acepta-legal">Confirmo mi pedido y acepto los <a routerLink="/ajustes" target="_blank" rel="noopener" class="text-warning">Términos y Condiciones consultables en Ajustes</a>; he leído el <a routerLink="/legal/privacidad" target="_blank" rel="noopener" class="text-warning">Aviso de Privacidad</a>.</label>
+      </div>
+      <!-- Botón de Confirmación -->
+      <div>
+        @if (isProcessing) {
+          <button class="btn btn-confirm-pay w-100 py-3 text-dark fs-6" disabled>
+            <span class="spinner-border spinner-border-sm me-2"></span> PROCESANDO TRANSACCIÓN...
+          </button>
+        } @else {
+          <button type="button" class="btn btn-confirm-pay w-100 py-3 text-dark fs-6" [disabled]="!acceptedLegal" (click)="confirmSimulatedPayment()">
+            CONFIRMAR PEDIDO SIMULADO POR ${{ total | number:'1.2-2' }}
+          </button>
+        }
+      </div>
+
+    </div>
+  </div>
+}

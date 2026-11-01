@@ -1,0 +1,155 @@
+/* Efecto Neón (Importado temáticamente) */
+.neon-title {
+  text-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00, 0 0 30px #ff0000;
+}
+
+/* Efecto hover en las filas de productos */
+.item-row {
+  transition: background-color 0.3s ease;
+}
+.item-row:hover {
+  background-color: #3d4349 !important;
+}
+
+/* Animación del botón de pagar en el ticket */
+.pulse-btn {
+  animation: pulse-warning 2s infinite;
+  transition: all 0.3s ease;
+}
+.pulse-btn:hover {
+  background-color: #ff0000 !important;
+  color: white !important;
+  border-color: #ff0000 !important;
+  animation: none;
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+}
+@keyframes pulse-warning {
+  0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 204, 0, 0.7); }
+  70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(255, 204, 0, 0); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 204, 0, 0); }
+}
+
+/* Botón de eliminar con brillo rojo */
+.pulse-danger:hover {
+  box-shadow: 0 0 15px rgba(220, 53, 69, 0.8);
+  transform: scale(1.1);
+  transition: all 0.2s ease;
+}
+
+/* El ticket de compra se queda fijo mientras haces scroll */
+.sticky-summary {
+  position: sticky;
+  top: 100px;
+}
+
+/* Modal de simulación de pago / Terminal Fazbear */
+.payment-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.82);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100000;
+  padding: 1.25rem;
+  animation: modal-fade-in 0.2s ease-out;
+}
+
+.payment-modal-card {
+  background-color: #17191d !important;
+  border: 1px solid #ffc107 !important;
+  border-radius: 12px;
+  max-width: 440px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 193, 7, 0.2);
+}
+
+.payment-modal-card h4 {
+  font-size: 1.15rem;
+  letter-spacing: 0.5px;
+}
+
+/* Botones de Selector (Efectivo / Tarjeta) */
+.btn-method {
+  background-color: transparent;
+  border: 1px solid #373e47;
+  color: #8c9ba5;
+  font-weight: 700;
+  padding: 10px 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.btn-method.active-method {
+  background-color: #ffb703 !important;
+  border-color: #ffb703 !important;
+  color: #111418 !important;
+}
+
+/* Recuadro de aviso para Efectivo */
+.cash-notice-box {
+  background-color: #d1d8df !important;
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+
+.cash-notice-box p {
+  color: #3b424a;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.cash-notice-box strong {
+  color: #1a1d20;
+}
+
+.total-cash-text {
+  color: #d88900 !important;
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+/* Formulario interactivo si se selecciona Tarjeta */
+.card-input-box {
+  background-color: #101215;
+  border: 1px solid #2b3038;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.card-input-box input {
+  background-color: #1c2025;
+  border: 1px solid #323842;
+  color: #ffffff;
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 1px;
+}
+
+.card-input-box input:focus {
+  background-color: #22272e;
+  border-color: #ffc107;
+  box-shadow: 0 0 8px rgba(255, 193, 7, 0.4);
+  color: #ffffff;
+}
+
+/* Botón inferior Confirmar Pago */
+.btn-confirm-pay {
+  background-color: #ffb703 !important;
+  border: none !important;
+  color: #111418 !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.5px;
+  border-radius: 8px;
+  transition: filter 0.2s ease, transform 0.1s ease;
+}
+
+.btn-confirm-pay:hover:not(:disabled) {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+@keyframes modal-fade-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
