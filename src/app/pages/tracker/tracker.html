@@ -1,39 +1,71 @@
 <section class="py-5 bg-black text-white min-vh-100 tracker-viewport">
   <div class="container pt-3">
-    
-    <!-- Encabezado de Monitor -->
-    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3 flex-wrap gap-3">
       <div>
-        <h2 class="text-warning fw-black mb-0 system-title">SISTEMA CCTV • MONITOREO DE DESPACHO</h2>
-        <span class="text-danger fw-bold small blink">● EN VIVO - CANAL DE VIGILANCIA</span>
+        <h2 class="text-warning fw-black mb-0 system-title">SISTEMA CCTV • TRACKER DE PEDIDOS</h2>
+        <p class="tracker-subtitle mb-0 mt-2">Sigue cada etapa de tu pedido y conoce cómo avanza hasta la entrega.</p>
       </div>
       <div class="text-end">
-        <span class="badge bg-dark border border-secondary text-info fs-6 px-3 py-2 font-monospace">12:00 AM • BATERÍA: 99%</span>
+        @if (currentOrder) {
+          <span class="tracker-status-badge" [class.is-cancelled]="isCancelled">● {{ currentOrder.folio }} · {{ orderStatusLabel }}</span>
+        } @else {
+          <span class="badge bg-dark border border-secondary text-info fs-6 px-3 py-2 font-monospace">SIN PEDIDOS ACTIVOS</span>
+        }
       </div>
     </div>
 
-    <!-- MONITOR DE RUTA (ESTILO MATRIZ FNAF) -->
-    <div class="cctv-frame p-4 mb-4 position-relative">
-      <div class="text-center mb-3">
-        <span class="hud-label text-cyan">DIAGRAMA DE AVANCE DE SECTORES</span>
+    @if (currentOrder) {
+      <div class="tracker-order-summary mb-4" [class.tracker-order-cancelled]="isCancelled">
+        <div class="tracker-summary-main">
+          <div class="tracker-summary-icon">{{ isCancelled ? '✕' : '🍕' }}</div>
+          <div>
+            <div class="tracker-summary-kicker">ESTADO DEL PEDIDO</div>
+            <h3 class="tracker-summary-title">{{ orderStatusLabel }}</h3>
+            <p class="tracker-summary-copy mb-0">{{ orderStatusDescription }}</p>
+          </div>
+        </div>
+        <div class="tracker-summary-meta">
+          <span><small>Folio</small><strong>{{ currentOrder.folio }}</strong></span>
+          <span><small>Comprobante</small><strong>{{ currentOrder.payment.receiptNumber }}</strong></span>
+          <span><small>Total</small><strong>${{ currentOrder.total | number:'1.2-2' }}</strong></span>
+        </div>
       </div>
+    } @else {
+      <div class="tracker-order-summary mb-4">
+        <div class="tracker-summary-main">
+          <div class="tracker-summary-icon">🍕</div>
+          <div>
+            <h3 class="tracker-summary-title">Tu próximo pedido comienza aquí</h3>
+            <p class="tracker-summary-copy mb-0">Aún no tienes un pedido registrado. Después de comprar, su progreso aparecerá automáticamente.</p>
+          </div>
+        </div>
+        <a routerLink="/menu" class="btn btn-warning fw-bold">Ir al menú</a>
+      </div>
+    }
 
-      <!-- Barra de conductos interactiva -->
+    <div class="cctv-frame p-4 mb-4 position-relative">
+      <div class="tracker-progress-header">
+        <div>
+          <span class="tracker-summary-kicker">RUTA DE TU PEDIDO</span>
+          <h3 class="tracker-progress-title mb-0">{{ isCancelled ? 'Pedido cancelado' : 'Progreso automático' }}</h3>
+        </div>
+        <div class="tracker-progress-value">{{ progressPercent }}%</div>
+      </div>
+      <div class="tracker-progress-rail" role="progressbar" [attr.aria-valuenow]="progressPercent" aria-valuemin="0" aria-valuemax="100" aria-label="Avance de la orden">
+        <span [style.width.%]="progressPercent"></span>
+      </div>
+      <p class="tracker-instruction">Los cuadros iluminados muestran la etapa actual del pedido. Selecciona una escena para conocer cada paso.</p>
+
       <div class="fnaf-track-grid">
         @for (item of steps; track item.step) {
-          <!-- Nodo de sector -->
           <div class="track-node-wrapper" (click)="switchCam(item.camId, item.step)">
             <div class="track-box" [class.active-node]="currentStepIndex >= item.step" [class.current-node]="currentStepIndex === item.step">
               <span class="node-id">{{ item.camId }}</span>
               <span class="node-name">{{ item.label }}</span>
-
-              <!-- Icono pixel de Golden Freddy ubicado en el nodo actual -->
               @if (currentStepIndex === item.step) {
-                <img src="golden.png" alt="Repartidor" class="golden-tracker-token" />
+                <img src="golden.png" alt="Marcador de pedido" class="golden-tracker-token" />
               }
             </div>
-
-            <!-- Conducto de unión entre nodos -->
             @if (!$last) {
               <div class="track-pipe" [class.pipe-active]="currentStepIndex > item.step"></div>
             }
@@ -41,61 +73,44 @@
         }
       </div>
 
-      <!-- Control manual para avanzar estado del pedido -->
       <div class="d-flex justify-content-center gap-3 mt-4">
-        <button class="btn btn-outline-secondary btn-sm" (click)="prevStatus()" [disabled]="currentStepIndex === 0">
-          ◀ Etapa Anterior
-        </button>
-        <button class="btn btn-warning btn-sm text-dark fw-bold px-4" (click)="nextStatus()" [disabled]="currentStepIndex === steps.length - 1">
-          Simular Avance ▶
-        </button>
+        <button class="btn btn-outline-info btn-sm" (click)="prevStatus()" [disabled]="currentStepIndex === 0 || !currentOrder">◀ Escena anterior</button>
+        <button class="btn btn-outline-warning btn-sm fw-bold" type="button" (click)="followCurrentStatus()" [disabled]="!currentOrder">Ver etapa actual</button>
+        <button class="btn btn-warning btn-sm text-dark fw-bold px-4" (click)="nextStatus()" [disabled]="currentStepIndex === steps.length - 1 || !currentOrder">Escena siguiente ▶</button>
       </div>
     </div>
 
-    <!-- PANTALLA DE CÁMARA CCTV -->
     <div class="row g-4">
-      
-      <!-- Visor de la Cámara -->
       <div class="col-lg-8">
         <div class="cctv-screen position-relative p-4 rounded border border-secondary shadow">
-          <!-- Filtro de líneas CRT y Estática -->
           <div class="scanlines"></div>
           @if (cctvStatic) {
             <div class="static-overlay"></div>
           }
 
-          <!-- Marcadores de la cámara -->
-          <div class="d-flex justify-content-between align-items-center mb-3 cctv-header position-relative z-2">
-            <span class="text-success fw-bold font-monospace fs-5">FEED: [{{ currentStep.camId }}]</span>
+          <div class="d-flex justify-content-between align-items-center mb-3 cctv-header position-relative z-2 flex-wrap gap-2">
+            <span class="text-success fw-bold font-monospace fs-5">● {{ currentStep.camId }} <small class="tracker-scene-label">VISTA DEL ÁREA</small></span>
             <span class="text-light font-monospace small">{{ currentStep.camName }}</span>
           </div>
 
-          <!-- Escenario de la cámara -->
-          <div class="camera-stage d-flex flex-column justify-content-center align-items-center text-center p-5 position-relative z-2">
-            <div class="display-3 mb-3">
-              @switch (currentStep.step) {
-                @case (0) { 👨‍🍳 }
-                @case (1) { 🔥 }
-                @case (2) { 📦 }
-                @case (3) { 🛵 }
-                @case (4) { 🍕 }
-              }
+          <div class="camera-stage position-relative z-2">
+            <img [src]="currentStep.image" [alt]="'Recreación digital: ' + currentStep.camName" class="tracker-photo" loading="lazy" decoding="async" />
+            <div class="tracker-camera-caption">
+              <span class="badge text-bg-warning text-dark mb-2">ETAPA DEL PEDIDO</span>
+              <h3 class="text-warning fw-bold mb-1">{{ currentStep.statusText }}</h3>
+              <p class="text-white small mb-0">{{ currentStep.detail }}</p>
             </div>
-            <h3 class="text-warning fw-bold">{{ currentStep.statusText }}</h3>
-            <p class="text-light-emphasis small max-w-md">{{ currentStep.detail }}</p>
           </div>
 
-          <!-- Pie del visor -->
           <div class="d-flex justify-content-between text-secondary small font-monospace pt-3 border-top border-dark position-relative z-2">
-            <span>MODO: SENSOR DE MOVIMIENTO ACTIVO</span>
-            <span>FREQ: 60Hz</span>
+            <span>ESTADO DEL PEDIDO · ACTUALIZACIÓN CADA 3 SEGUNDOS</span>
+            <span>Imágenes ilustrativas (todo es con fines académicos). No son cámaras en vivo.</span>
           </div>
         </div>
       </div>
 
-      <!-- Panel de Datos del Destino y Cámaras -->
       <div class="col-lg-4">
-        <div class="card bg-black border-secondary text-white p-3 mb-3">
+        <div class="card tracker-side-card text-white p-3 mb-3">
           <h5 class="text-warning fw-bold mb-3 border-bottom border-secondary pb-2">📍 INFORMACIÓN DE ENTREGA</h5>
           @if (deliveryInfo) {
             <div class="small mb-2"><span class="text-secondary">Guardia a recibir:</span> <strong class="text-light">{{ deliveryInfo.customerName }}</strong></div>
@@ -103,35 +118,40 @@
             <div class="small mb-2"><span class="text-secondary">Sector:</span> <span class="text-light">{{ deliveryInfo.neighborhood || 'Zona Principal' }}</span></div>
             <div class="small mb-2"><span class="text-secondary">Contacto:</span> <span class="text-light">{{ deliveryInfo.phone }}</span></div>
             @if (deliveryInfo.specialInstructions) {
-              <div class="p-2 bg-dark rounded border border-secondary text-warning small fst-italic mt-2">
-                "{{ deliveryInfo.specialInstructions }}"
-              </div>
+              <div class="p-2 bg-dark rounded border border-secondary text-warning small fst-italic mt-2">"{{ deliveryInfo.specialInstructions }}"</div>
             }
           } @else {
             <p class="text-secondary small mb-3">No hay dirección de destino asignada.</p>
-            <a routerLink="/ordena-online" class="btn btn-outline-warning btn-sm w-100 fw-bold">Registrar Destino</a>
+            <a routerLink="/ordena-online" class="btn btn-outline-warning btn-sm w-100 fw-bold">Registrar destino</a>
           }
         </div>
 
-        <!-- Botonera de cambio rápido de cámaras -->
-        <div class="card bg-black border-secondary text-white p-3">
+        <div class="card tracker-side-card text-white p-3 mb-3">
           <h6 class="text-cyan fw-bold mb-2">CANALES DISPONIBLES</h6>
           <div class="d-grid gap-2">
             @for (item of steps; track item.step) {
-              <button 
+              <button
                 class="btn btn-sm text-start font-monospace d-flex justify-content-between"
                 [class.btn-outline-info]="selectedCam !== item.camId"
                 [class.btn-info]="selectedCam === item.camId"
-                (click)="switchCam(item.camId, item.step)">
+                (click)="switchCam(item.camId, item.step)" [attr.aria-label]="'Mostrar ' + item.camName">
                 <span>{{ item.camId }} - {{ item.label }}</span>
-                @if (currentStepIndex === item.step) { <span>🍕</span> }
+                @if (statusStepIndex === item.step && !isCancelled) { <span>●</span> }
               </button>
             }
           </div>
         </div>
+
+        @if (currentOrder) {
+          <div class="card tracker-side-card text-white p-3">
+            <h6 class="text-warning fw-bold mb-3">🧾 RESUMEN DEL PEDIDO</h6>
+            <div class="small mb-2"><span class="text-secondary">Folio:</span> <span class="text-light">{{ currentOrder.folio }}</span></div>
+            <div class="small mb-2"><span class="text-secondary">Pago:</span> <span class="text-light">{{ currentOrder.payment.method === 'tarjeta' ? 'Tarjeta' : 'Efectivo' }}</span></div>
+            <div class="small mb-2"><span class="text-secondary">Factura:</span> <span class="text-light">{{ currentOrder.payment.invoiceNumber }}</span></div>
+            <div class="small"><span class="text-secondary">Artículos:</span> <span class="text-light">{{ currentOrder.items.length }}</span></div>
+          </div>
+        }
       </div>
-
     </div>
-
   </div>
 </section>

@@ -12,7 +12,7 @@
 }
 
 <!-- Notificaciones Globales Arriba a la Izquierda -->
-<div class="fazbear-toast-container">
+<div class="fazbear-toast-container" [class.location-prompt-active]="showLocationPrompt">
   @for (alert of notificationService.alerts$ | async; track alert.id) {
     <div class="fazbear-toast type-{{ alert.type }}" (click)="notificationService.remove(alert.id)">
       <div class="fazbear-toast-header">
@@ -41,11 +41,125 @@
 <audio id="global-music" loop>
   <source src="song.mp3" type="audio/mpeg">
 </audio>
-@if (cookieDecision === null) {
-  <div role="dialog" aria-label="Preferencias de cookies" class="position-fixed bottom-0 start-0 end-0 p-3 bg-black text-white border-top border-warning" style="z-index:1050">
-    <div class="container d-flex flex-column flex-md-row align-items-md-center gap-3 justify-content-between">
-      <p class="mb-0 small">Usamos almacenamiento necesario para carrito y sesión de demostración. Puedes aceptar o rechazar cookies opcionales. <a routerLink="/legal/privacidad" class="text-warning">Aviso de privacidad</a>.</p>
-      <div class="d-flex gap-2"><button class="btn btn-outline-light btn-sm" (click)="chooseCookies(false)">Rechazar opcionales</button><button class="btn btn-warning btn-sm" (click)="chooseCookies(true)">Aceptar opcionales</button></div>
+<!-- La tienda utiliza Web Storage; no coloca cookies HTTP propias para publicidad. -->
+@if (!hasCookieDecision) {
+  <section role="region" aria-label="Preferencias de almacenamiento" aria-describedby="memos-cookie-text" class="memos-cookie-banner">
+    <div class="container cookie-banner-layout">
+      <div class="cookie-banner-copy">
+        <strong class="text-warning">🍪 Tu privacidad en Memo's Pizza</strong>
+        <p id="memos-cookie-text" class="mb-0 small text-light">
+          Utilizamos almacenamiento esencial para el carrito, el registro temporal y la sesión. Tú decides si recordamos el volumen y los datos de entrega.
+          No usamos cookies publicitarias ni de analítica.
+          <a routerLink="/legal/privacidad" class="text-warning">Aviso de Privacidad</a>.
+        </p>
+      </div>
+      <div class="cookie-actions">
+        <button class="btn btn-outline-warning btn-sm fw-bold" type="button" (click)="acceptNecessary()">Solo necesarias</button>
+        <button class="btn btn-outline-light btn-sm fw-bold" type="button" (click)="openCookieSettings()">Elegir cookies</button>
+        <button class="btn btn-warning btn-sm fw-bold" type="button" (click)="acceptAll()">Aceptar todas</button>
+      </div>
     </div>
+  </section>
+}
+
+<!-- Panel de preferencias accesible desde el banner o desde el footer. -->
+@if (cookieSettingsOpen) {
+  <div class="memos-privacy-overlay" role="presentation" (click)="closeCookieSettings()">
+    <section role="dialog" aria-modal="true" aria-labelledby="memos-privacy-title" aria-describedby="memos-privacy-desc"
+             class="memos-privacy-panel" (click)="$event.stopPropagation()">
+      <div class="memos-privacy-head">
+        <div>
+          <h2 id="memos-privacy-title" class="h4 text-warning fw-bold mb-1">🍪 Elige tus preferencias</h2>
+          <p id="memos-privacy-desc" class="small mb-0 text-light-emphasis">Activa solo las opciones que quieras. Puedes cambiarlas cuando quieras desde el footer.</p>
+        </div>
+        <button type="button" class="btn-close btn-close-white" aria-label="Cerrar preferencias" (click)="closeCookieSettings()"></button>
+      </div>
+      <div class="memos-privacy-body">
+        <div class="privacy-option">
+          <div>
+            <h3 class="h6 mb-1">Necesarias para la tienda <span class="small text-secondary">(siempre activas)</span></h3>
+            <p>Carrito y sesión local del comprador, registro temporal, datos de la entrega actual y tu elección de privacidad. Sin ellas no funcionan estas herramientas de la tienda.</p>
+            <small class="text-secondary">localStorage: <code>memos_cart</code>, <code>memos_privacy_choices_v2</code> · sessionStorage: <code>memos_temp_users_v1</code>, <code>memos_current_user</code>, <code>memos_delivery</code>, <code>memos_location_prompt_answer</code>.</small>
+          </div>
+          <div class="form-check form-switch">
+            <input id="cookies-essential" class="form-check-input" type="checkbox" role="switch" checked disabled aria-label="Almacenamiento necesario siempre activo">
+          </div>
+        </div>
+        <div class="privacy-option">
+          <div>
+            <h3 class="h6 mb-1">Personalización de audio <span class="text-warning small">(opcional)</span></h3>
+            <p>Recuerda el volumen preferido de la música. Si no la aceptas, el audio seguirá funcionando mientras navegas, pero no se recordará en una visita futura.</p>
+            <small class="text-secondary">localStorage: <code>memos_audio_volume</code> (solo al activar esta opción).</small>
+          </div>
+          <div class="form-check form-switch">
+            <input id="cookies-audio" class="form-check-input" type="checkbox" role="switch" [checked]="choiceAudio" (change)="toggleCookiePreference('audio', $event)" aria-label="Recordar personalización de audio">
+          </div>
+        </div>
+        <div class="privacy-option">
+          <div>
+            <h3 class="h6 mb-1">Recordar dirección de entrega <span class="text-warning small">(opcional)</span></h3>
+            <p>Permite conservar nombre, teléfono y dirección de entrega en este navegador para futuros pedidos. Sin permiso solo se mantienen durante la sesión actual.</p>
+            <small class="text-secondary">localStorage: <code>memos_delivery</code> (solo al activar esta opción). No lo uses en dispositivos compartidos.</small>
+          </div>
+          <div class="form-check form-switch">
+            <input id="cookies-address" class="form-check-input" type="checkbox" role="switch" [checked]="choiceAddress" (change)="toggleCookiePreference('address', $event)" aria-label="Recordar datos de entrega en este dispositivo">
+          </div>
+        </div>
+        <div class="privacy-option inactive">
+          <div><h3 class="h6 mb-1">Analítica y publicidad <span class="text-secondary small">(no utilizadas)</span></h3>
+          <p>Esta versión no tiene herramientas de seguimiento publicitario ni de analítica de visitantes.</p></div>
+          <span class="small text-secondary">Inactivas</span>
+        </div>
+        <p class="privacy-location-note">💳 Puedes guardar un <strong>perfil de tarjeta de prueba</strong> desde la terminal de pago, pero solo si marcas expresamente esa opción. No guardamos el número completo ni el CVV. Puedes borrar estos perfiles desde «Mi cuenta → Ajustes». No es una cookie ni se habilita automáticamente con «Aceptar todas».</p>
+        <p class="privacy-location-note">📍 La <strong>ubicación del navegador no es una cookie</strong>: se pide por separado, solo después de tu decisión de privacidad, y puedes rechazarla. No guardamos tus coordenadas de forma permanente ni las convertimos automáticamente en una dirección postal.</p>
+        <p class="small mb-0">Consulta el <a routerLink="/legal/privacidad" (click)="closeCookieSettings()">Aviso de Privacidad</a> y la <a routerLink="/legal/cookies" (click)="closeCookieSettings()">Política de Cookies y Almacenamiento</a>.</p>
+      </div>
+      <div class="memos-privacy-actions">
+        <button class="btn btn-outline-light btn-sm" type="button" (click)="acceptNecessary()">Rechazar opcionales</button>
+        <button class="btn btn-outline-warning btn-sm" type="button" (click)="saveSelectedCookies()">Guardar selección</button>
+        <button class="btn btn-warning btn-sm fw-bold" type="button" (click)="acceptAll()">Aceptar todas</button>
+      </div>
+    </section>
   </div>
+}
+
+<!-- Sin superposición: se muestra SOLO después de guardar la decisión del aviso de privacidad. -->
+@if (showLocationPrompt) {
+  <aside class="memos-location-request" role="region" aria-label="Permitir ubicación a Memo's Pizza">
+    <div class="d-flex justify-content-between align-items-start gap-2">
+      <div>
+        <strong class="text-warning">📍 ¿Usamos tu ubicación actual?</strong>
+        <p class="small text-light mt-2 mb-2">Es opcional. Solo leeremos coordenadas durante esta sesión, con tu permiso. Para un pedido a domicilio deberás escribir tu calle y número.</p>
+      </div>
+      <button class="btn-close btn-close-white btn-sm" type="button" aria-label="Cerrar solicitud de ubicación" (click)="declineLocation()"></button>
+    </div>
+    @if (locationStatus === 'requesting' || locationStatus === 'granted' || locationStatus === 'error') {
+      <p class="small mb-2" aria-live="polite" [class.text-success]="locationStatus === 'granted'" [class.text-info]="locationStatus === 'requesting'" [class.text-warning]="locationStatus === 'error'">{{ locationMessage }}</p>
+    }
+    <div class="d-flex gap-2 flex-wrap">
+      @if (locationStatus !== 'granted') {
+        <button class="btn btn-warning btn-sm fw-bold" type="button" (click)="requestLocation()" [disabled]="locationStatus === 'requesting'">Compartir ubicación</button>
+      }
+      <button class="btn btn-outline-light btn-sm" type="button" (click)="locationStatus === 'granted' ? dismissLocation() : declineLocation()">{{ locationStatus === 'granted' ? 'Entendido' : 'No, gracias' }}</button>
+    </div>
+    <a routerLink="/legal/privacidad" class="text-warning small d-inline-block mt-2">¿Cómo usamos estos datos?</a>
+  </aside>
+}
+
+<!-- Error de red personalizado. El navegador debe haber cargado previamente la aplicación
+     para poder mostrar este aviso tras perder la conexión. -->
+@if (isOffline) {
+  <section class="memos-offline-screen" role="alertdialog" aria-modal="true" aria-labelledby="offline-screen-title" aria-describedby="offline-screen-description">
+    <div class="memos-offline-content">
+      <p class="memos-offline-pretitle">MEMO'S PIZZA · SISTEMA FUERA DE LÍNEA</p>
+      <div class="memos-offline-face" aria-hidden="true">
+        <img src="/assets/memos/offline/cabeza-error-pixel.png" alt="" width="121" height="109" />
+        <div class="memos-offline-mouth"><span>ERROR</span><strong>SIN RED</strong></div>
+      </div>
+      <h2 id="offline-screen-title">¡Se perdió la conexión!</h2>
+      <p id="offline-screen-description">{{ offlineMessage }}</p>
+      <button class="memos-offline-retry" type="button" (click)="retryConnection()">Volver a intentar</button>
+      <span class="memos-offline-footnote">La función de pedidos requiere una conexión estable.</span>
+    </div>
+  </section>
 }

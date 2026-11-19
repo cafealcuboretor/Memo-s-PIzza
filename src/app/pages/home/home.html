@@ -1,108 +1,127 @@
-<!-- Banner Hero Principal -->
-<section class="hero-pizza text-white text-center position-relative overflow-hidden d-flex flex-column justify-content-center" style="min-height: calc(100vh - 65px);">
-  <div class="container position-relative z-2 py-5">
-     <!-- Resto de tu código (título, carrusel, etc.) -->
-    <h1 class="display-3 fw-bold text-warning neon-title mb-1">MEMO'S FAMILY DINNER</h1>
-    <p class="lead mb-3 text-light">¡Donde la fantasía y la diversión cobran vida!</p>
+<!-- BIENVENIDA: escenario original de Memo's Pizza, ahora con controles y acciones. -->
+<section class="hero-pizza home-hero" [class.hero-lights-off]="!stageLightsOn" aria-labelledby="home-hero-title">
+  <div class="hero-light-beams" aria-hidden="true"><span></span><span></span><span></span></div>
+  <div class="container position-relative home-hero-container">
+    <p class="home-eyebrow"><span class="home-live-dot" aria-hidden="true"></span> LAS PUERTAS ESTÁN ABIERTAS · ¡BIENVENIDO!</p>
+    <h1 id="home-hero-title" class="home-hero-title">MEMO'S <span>FAMILY DINNER</span></h1>
+    <p class="home-hero-lead">¡La diversión está servida y tu próxima pizza te está esperando!</p>
+    <p class="home-hero-subtitle">Entra, disfruta del espectáculo y descubre los sabores que harán especial tu noche.</p>
 
-    <div id="animatronicCarousel" class="carousel slide carousel-fade mx-auto shadow-lg border border-warning rounded mb-3 position-relative" data-bs-ride="carousel" style="max-width: 1050px;">
-      <!-- Botón movido a la izquierda (start-0) con un margen un poco más amplio (m-3) -->
-      <button class="btn btn-dark btn-sm position-absolute bottom-0 start-0 m-3 z-3 border-warning text-warning fw-bold" (click)="toggleVideoMute()" style="opacity: 0.85;">
-        {{ isVideoMuted ? '🔇 Silenciado' : '🔊 Sonido Video' }}
-      </button>
-
-      <div class="carousel-inner rounded">
-        <div class="carousel-item active" data-bs-interval="4000">
-          <video id="promo-video" src="promocion.mp4" class="d-block w-100" autoplay muted loop playsinline></video>
-        </div>
+    <div class="home-stage-shell">
+      <div class="home-stage-marquee" aria-hidden="true">
+        @for (light of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]; track light) {
+          <span class="home-stage-light"></span>
+        }
       </div>
+      <div class="home-stage-topbar">
+        <div><span class="home-stage-pulse"></span> EL ESPECTÁCULO COMIENZA AQUÍ</div>
+        <span class="home-stage-label">MEMO'S ORIGINAL SHOW</span>
+      </div>
+      <div class="home-stage-screen home-interactive-show">
+        <iframe class="memos-show-iframe" title="Show interactivo de Memo’s Pizza con cortinas, luces, confeti y rockola" src="/show/index.html" loading="eager" allow="autoplay; fullscreen"></iframe>
+      </div>
+      <div class="home-stage-foot" aria-hidden="true"><span>★</span><span>MEMO'S FAMILY DINNER</span><span>★</span></div>
+    </div>
+
+    <div class="home-hero-actions">
+      <a routerLink="/menu" class="home-action-primary"><span aria-hidden="true">🍕</span> ¡Quiero una pizza!</a>
+      <a routerLink="/promos" class="home-action-secondary"><span aria-hidden="true">🎁</span> Ver promociones</a>
+      <a href="#gaceta-nocturna" class="home-action-tertiary">Descubrir noticias <span aria-hidden="true">↓</span></a>
+    </div>
+    <div class="home-invitation">
+      <span>🎉 Momentos para compartir</span><i aria-hidden="true"></i>
+      <span>🍰 Postres que alegran</span><i aria-hidden="true"></i>
+      <span>🎊 Sorpresas en cada edición</span>
     </div>
   </div>
-  
-  <div class="marquee-lights"></div>
+  <div class="hero-marquee-edge" aria-hidden="true"></div>
 </section>
 
-<section class="py-5 bg-dark">
+<!-- GACETA: ejemplares de papel con apertura animada y acceso directo a promociones. -->
+<section id="gaceta-nocturna" class="home-gazette-section" aria-labelledby="gazette-title">
   <div class="container">
-    
-    <div class="text-center mb-5">
-      <h2 class="text-warning fw-bold d-inline-flex align-items-center gap-2" style="letter-spacing: 2px;">
-        <span>🗞️</span> GACETA Y ARCHIVOS NOCTURNOS <span>🗞️</span>
-      </h2>
-      <p class="text-secondary small mt-1">Haz clic sobre cualquier rollo para desplegar el ejemplar</p>
+    <div class="home-gazette-intro home-reveal">
+      <p class="home-eyebrow home-eyebrow-soft">EXTRA · EXTRA · ¡LA ALEGRÍA SE SIRVE EN REBANADAS!</p>
+      <h2 id="gazette-title">🗞️ GACETA DE LAS BUENAS NOTICIAS</h2>
+      <p>Seis ediciones especiales para descubrir novedades, sabores y motivos para celebrar en Memo's Pizza.</p>
+      <div class="home-instruction"><span aria-hidden="true">✦</span> Pulsa un periódico para abrir sus páginas. También puedes entrar a cada promoción directamente desde su portada.</div>
     </div>
 
-    <!-- Rejilla de 6 rollos estilo cilindro 3D -->
-    <div class="row g-5 justify-content-center">
+    <div class="home-gazette-grid">
       @for (item of articles; track item.id) {
-        <div class="col-12 col-md-6 col-lg-4 d-flex justify-content-center">
-          <div class="cylinder-wrapper" (click)="openArticle(item)">
-            
-            <div class="newspaper-cylinder">
-              <!-- Borde enrollado izquierdo -->
-              <div class="cylinder-cap"></div>
-
-              <!-- Cuerpo cilíndrico del papel -->
-              <div class="cylinder-body">
-                <!-- Cuerda fina con nudo -->
-                <div class="twine-band">
-                  <div class="twine-knot"></div>
-                </div>
-
-                <!-- Impresión del titular a lo largo del rollo -->
-                <div class="cylinder-print">
-                  <div class="brand-press">MEMO'S GAZETTE</div>
-                  <div class="divider-rule"></div>
-                  <h4 class="roll-headline">{{ item.headline }}</h4>
-                  <div class="roll-meta">
-                    <span>{{ item.edition }}</span>
-                    <span>•</span>
-                    <span>{{ item.date }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Sombra simulada debajo del rollo -->
-              <div class="cylinder-shadow"></div>
+        <article class="gazette-item home-reveal" [style.--card-index]="$index" [attr.aria-label]="item.headline">
+          <div class="gazette-paper-stack" aria-hidden="true"></div>
+          <div class="gazette-cover">
+            <button class="gazette-cover-open" type="button" (click)="openArticle(item)" [attr.aria-label]="'Abrir periódico: ' + item.headline"></button>
+            <div class="gazette-masthead">
+              <span class="gazette-microtitle">LAS BUENAS NOTICIAS DE LA PIZZERÍA</span>
+              <span class="gazette-brand">MEMO'S GAZETTE</span>
+              <span class="gazette-edition">{{ item.edition }} <span aria-hidden="true">•</span> {{ item.date }}</span>
             </div>
-
+            <div class="gazette-print-body">
+              <span class="gazette-tag">{{ item.tag }}</span>
+              <h3>{{ item.headline }}</h3>
+              <p class="gazette-subhead">{{ item.subheadline }}</p>
+              <div class="gazette-cover-photo">
+                <img [src]="item.image" [alt]="item.imageAlt" loading="lazy" decoding="async" />
+                <a class="gazette-mini-promo" routerLink="/promos" [attr.aria-label]="item.promoLabel + ' en Promociones'">
+                  <span aria-hidden="true">🎁</span> {{ item.promoLabel }} <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+              <p class="gazette-teaser">{{ item.preview }}</p>
+              <div class="gazette-fake-columns" aria-hidden="true"><span></span><span></span></div>
+            </div>
+            <div class="gazette-cover-bottom"><span>EDICIÓN ESPECIAL</span><strong>ABRIR EJEMPLAR ↗</strong></div>
+            <div class="gazette-fold-shadow" aria-hidden="true"></div>
           </div>
-        </div>
+        </article>
       }
     </div>
-
+    <div class="gazette-last-word home-reveal">
+      <p>¿Te entró el antojo? <strong>¡La mejor noticia puede estar en tu próximo pedido!</strong></p>
+      <a routerLink="/promos" class="btn btn-warning fw-bold px-4 py-2">Ver todas las promociones <span aria-hidden="true">↗</span></a>
+    </div>
   </div>
 </section>
 
-<!-- Modal desplegable al hacer clic -->
+<!-- Pliego abierto: dos páginas de periódico, animación y teclado accesible (Escape). -->
 @if (selectedArticle) {
-  <div class="newspaper-modal-backdrop" (click)="closeArticle()">
-    <div class="newspaper-sheet p-4 p-md-5 rounded shadow-lg position-relative" (click)="$event.stopPropagation()">
-      <button type="button" class="btn-close position-absolute top-0 end-0 m-3" aria-label="Close" (click)="closeArticle()"></button>
-
-      <div class="text-center border-bottom border-dark pb-2 mb-3">
-        <h1 class="newspaper-title fw-black mb-0">MEMO'S CHRONICLE</h1>
-        <div class="d-flex justify-content-between text-uppercase small border-top border-bottom border-dark py-1 my-2">
-          <span>{{ selectedArticle.edition }}</span>
-          <span>FECHA: {{ selectedArticle.date }}</span>
-          <span>PRECIO: $0.00</span>
+  <div class="gazette-overlay" (click)="closeArticle()">
+    <section class="gazette-open-sheet" role="dialog" aria-modal="true" aria-labelledby="gazette-expanded-heading" (click)="$event.stopPropagation()">
+      <button type="button" class="gazette-close" aria-label="Cerrar periódico" (click)="closeArticle()">✕</button>
+      <div class="gazette-sheet-header">
+        <span>EDICIÓN EXTRAORDINARIA · {{ selectedArticle.edition }}</span>
+        <strong>MEMO'S GAZETTE</strong>
+        <span>{{ selectedArticle.date }} · EJEMPLAR GRATUITO</span>
+      </div>
+      <div class="gazette-sheet-pages">
+        <div class="gazette-page gazette-page-main">
+          <p class="gazette-sheet-kicker">{{ selectedArticle.kicker }}</p>
+          <h2 id="gazette-expanded-heading">{{ selectedArticle.headline }}</h2>
+          <p class="gazette-sheet-deck">{{ selectedArticle.subheadline }}</p>
+          <div class="gazette-sheet-photo"><img [src]="selectedArticle.image" [alt]="selectedArticle.imageAlt" decoding="async" /></div>
+          <p class="gazette-photo-caption">{{ selectedArticle.photoCaption }}</p>
+        </div>
+        <div class="gazette-page gazette-page-story">
+          <div class="gazette-story-heading"><span>NOTICIA DESTACADA</span><span>★ SECCIÓN FELIZ ★</span></div>
+          <div class="gazette-story-copy">
+            @for (paragraph of selectedArticle.content; track $index) {
+              <p>{{ paragraph }}</p>
+            }
+          </div>
+          <div class="gazette-story-callout">
+            <span class="gazette-story-star" aria-hidden="true">✦</span>
+            <h3>¿Quieres saber más?</h3>
+            <p>Revisa las promociones y descubre lo que Memo's Pizza preparó para ti.</p>
+            <a routerLink="/promos" class="gazette-story-link" (click)="closeArticle()">{{ selectedArticle.promoLabel }} <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="gazette-story-footer"><span>UNA PUBLICACIÓN DE MEMO'S FAMILY DINNER</span><span>(Todo es con fines académicos)</span></div>
         </div>
       </div>
-
-      <div class="newspaper-body">
-        <h2 class="fw-bold text-dark mb-1">{{ selectedArticle.headline }}</h2>
-        <h5 class="text-muted fst-italic mb-3">{{ selectedArticle.subheadline }}</h5>
-        <hr class="my-3">
-        <div class="newspaper-columns">
-          @for (paragraph of selectedArticle.content; track $index) {
-            <p class="text-justify leading-relaxed mb-3">{{ paragraph }}</p>
-          }
-        </div>
+      <div class="gazette-sheet-actions">
+        <span class="gazette-hint">Presiona Esc para cerrar el periódico.</span>
+        <button type="button" class="gazette-roll-up" (click)="closeArticle()">Cerrar periódico</button>
       </div>
-
-      <div class="text-center border-top border-dark pt-3 mt-4">
-        <button class="btn btn-dark btn-sm px-4 fw-semibold" (click)="closeArticle()">Enrollar de nuevo</button>
-      </div>
-    </div>
+    </section>
   </div>
 }

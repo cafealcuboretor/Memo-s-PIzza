@@ -161,3 +161,255 @@
   z-index: 5;
   pointer-events: none;
 }
+
+/* Imágenes realistas integradas sin alterar el marco CCTV del proyecto. */
+.camera-stage { height: clamp(255px, 38vw, 490px); padding: 0 !important; overflow: hidden; border-radius: 6px; background: #0a0a0a; }
+.tracker-photo { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.tracker-camera-caption { position: absolute; bottom: 0; left: 0; right: 0; padding: 1.35rem 1rem 1rem; background: linear-gradient(to top, rgba(0,0,0,.95) 2%, rgba(0,0,0,.62) 70%, transparent); text-align: center; }
+.tracker-camera-caption h3 { font-size: clamp(1.05rem,2.5vw,1.5rem); text-shadow: 0 2px 8px #000; }
+.tracker-camera-caption p { max-width: 650px; margin: auto; }
+@media (max-width: 550px) { .camera-stage { height: 270px; } .cctv-screen { padding: .85rem !important; } .tracker-camera-caption { padding: .85rem; } .tracker-camera-caption p { font-size: .75rem; } }
+
+/* Renovación visual del Tracker: la etapa real y las escenas se muestran por separado. */
+.tracker-viewport {
+  background: radial-gradient(ellipse at 45% 0%, rgba(255, 193, 7, .045), transparent 45%), #06090c !important;
+}
+.tracker-viewport .tracker-subtitle {
+  color: #c0cbd7;
+  font-size: .92rem;
+  line-height: 1.5;
+}
+.tracker-viewport .tracker-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  border: 1px solid #3b6571;
+  border-radius: 999px;
+  padding: .6rem .9rem;
+  background: #10232b;
+  color: #84e4f4;
+  font-size: .85rem;
+  font-weight: 800;
+  letter-spacing: .025em;
+}
+.tracker-viewport .tracker-status-badge.is-cancelled {
+  border-color: #b5434e;
+  background: #311219;
+  color: #ffadba;
+}
+.tracker-order-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.3rem;
+  padding: 1.35rem 1.45rem;
+  color: #f3f7fa;
+  background: linear-gradient(125deg, #151a21, #101820);
+  border: 1px solid #59606b;
+  border-left: 5px solid #ffbf16;
+  border-radius: 16px;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .32);
+}
+.tracker-order-summary.tracker-order-cancelled {
+  border-left-color: #ef5565;
+  background: linear-gradient(125deg, #25151b, #141820);
+}
+.tracker-summary-main {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1 1 280px;
+}
+.tracker-summary-icon {
+  display: grid;
+  place-items: center;
+  background: rgba(255, 193, 7, .1);
+  border: 1px solid rgba(255, 193, 7, .25);
+  min-width: 62px;
+  width: 62px;
+  height: 62px;
+  border-radius: 16px;
+  font-size: 1.55rem;
+  color: #ffda58;
+}
+.tracker-summary-kicker {
+  color: #ffa915;
+  text-transform: uppercase;
+  letter-spacing: .15em;
+  font-size: .7rem;
+  font-weight: 800;
+  margin-bottom: .4rem;
+}
+.tracker-summary-title {
+  color: #fff;
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  font-weight: 850;
+  line-height: 1.2;
+  margin-bottom: .35rem;
+}
+.tracker-summary-copy {
+  color: #ced6e0 !important;
+  font-size: .92rem;
+  line-height: 1.5;
+}
+.tracker-summary-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 1.15rem;
+  flex: 1 1 270px;
+}
+.tracker-summary-meta span {
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+  min-width: 100px;
+}
+.tracker-summary-meta small {
+  font-size: .72rem;
+  color: #bbc8d5;
+  text-transform: uppercase;
+}
+.tracker-summary-meta strong {
+  color: #fff !important;
+  font-size: .9rem;
+  overflow-wrap: anywhere;
+}
+.tracker-viewport .cctv-frame {
+  background: linear-gradient(180deg, #0b1016, #06090e);
+  border: 1px solid #304a5a;
+  border-radius: 17px;
+  box-shadow: 0 20px 35px rgba(0, 0, 0, .34);
+}
+.tracker-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: .85rem;
+}
+.tracker-progress-title {
+  color: #f4f7fa;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+.tracker-progress-value {
+  color: #ffc107;
+  font: 800 1.45rem/1 'Courier New', monospace;
+}
+.tracker-progress-rail {
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #26303c;
+  border: 1px solid #374352;
+}
+.tracker-progress-rail > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #14d2b2, #ffe067);
+  box-shadow: 0 0 15px rgba(20, 210, 178, .4);
+  transition: width .6s ease-out;
+}
+.tracker-instruction {
+  font-size: .83rem;
+  color: #b8c6d5;
+  line-height: 1.5;
+  margin: .85rem 0 0;
+}
+.tracker-viewport .track-box {
+  border-radius: 11px;
+  border-width: 2px;
+  color: #eaf0f8;
+}
+.tracker-viewport .track-box.selected-node {
+  outline: 1px dashed #ffc107;
+  outline-offset: 3px;
+}
+.tracker-viewport .track-box.current-node {
+  background-color: #30280c;
+}
+.tracker-viewport .node-name {
+  color: #c8d2de;
+  line-height: 1.15;
+}
+.tracker-viewport .node-camera-indicator {
+  position: absolute;
+  top: -14px;
+  right: -10px;
+  font-size: .8rem;
+  padding: 1px 5px;
+  border: 1px solid #f0b529;
+  color: #ffdd6f;
+  background: #101418;
+  border-radius: 50%;
+}
+.tracker-viewport .track-box:focus-visible {
+  outline: 2px solid #ffc107;
+  outline-offset: 4px;
+}
+.tracker-viewport .cctv-screen {
+  background: linear-gradient(135deg, #101820, #080b10);
+  border-color: #344757 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .36) !important;
+}
+.tracker-viewport .tracker-scene-label {
+  color: #8cb4b9;
+  font-size: .65rem;
+  font-weight: 600;
+  letter-spacing: .12em;
+}
+.tracker-viewport .tracker-side-card {
+  background: #10151d !important;
+  border: 1px solid #354455 !important;
+  border-radius: 15px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .27);
+}
+.tracker-viewport .tracker-side-card .text-secondary,
+.tracker-viewport .cctv-screen .text-secondary {
+  color: #aebed0 !important;
+}
+.tracker-viewport .tracker-side-card .text-light,
+.tracker-viewport .tracker-side-card strong {
+  color: #f5f8fc !important;
+}
+.tracker-viewport .tracker-side-card button {
+  border-radius: 9px;
+}
+.tracker-viewport .tracker-camera-caption {
+  background: linear-gradient(to top, rgba(0, 0, 0, .96) 0%, rgba(0, 0, 0, .7) 70%, transparent);
+  padding: 1.25rem;
+}
+.tracker-viewport .tracker-camera-caption h3 {
+  color: #ffdc4d !important;
+  text-shadow: 0 2px 9px #000;
+}
+.tracker-viewport .tracker-camera-caption p {
+  color: #f2f4f7 !important;
+  text-shadow: 0 2px 5px #000;
+}
+@media (max-width: 767px) {
+  .tracker-summary-main {
+    flex-direction: column;
+    text-align: center;
+  }
+  .tracker-summary-meta {
+    justify-content: flex-start;
+    width: 100%;
+  }
+  .tracker-viewport .fnaf-track-grid {
+    padding: 1.5rem 4px;
+  }
+  .tracker-viewport .cctv-frame {
+    padding: .85rem !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tracker-progress-rail > span,
+  .tracker-viewport .track-box {
+    transition: none;
+  }
+}

@@ -1,17 +1,18 @@
 import { Component, Inject, PLATFORM_ID, OnInit, ChangeDetectorRef } from '@angular/core';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { CartService } from '../../services/cart';
+import { PrivacyPreferencesService } from '../../services/privacy-preferences';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './header.html',
   styleUrl: './header.css'
 })
 export class Header implements OnInit {
-  volumeText = '5%';
+  isMusicOn = false;
   cartCount = 0;
   isLoggedIn = false;
   userName = '';
@@ -19,6 +20,7 @@ export class Header implements OnInit {
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private cartService: CartService,
+    private privacy: PrivacyPreferencesService,
     private router: Router,
     private cdr: ChangeDetectorRef // <-- Herramienta para forzar a Angular a actualizar la pantalla
   ) {}
@@ -52,38 +54,22 @@ export class Header implements OnInit {
     }
   }
 
-  toggleMusic(event: any) {
-    if (isPlatformBrowser(this.platformId)) {
-      const isChecked = event.target.checked;
-      const audios = document.querySelectorAll('audio');
-      
-      const slider = document.getElementById('volumeSlider') as HTMLInputElement;
-      const currentVolume = slider ? parseFloat(slider.value) : 0.05;
-      
-      audios.forEach(audio => {
-        if (!isChecked) {
-          audio.muted = true;
-          audio.pause();
-          audio.setAttribute('data-user-muted', 'true');
-        } else {
-          audio.muted = false;
-          audio.volume = currentVolume;
-          audio.removeAttribute('data-user-muted');
-          audio.play().catch(() => {});
-        }
-      });
-    }
-  }
-
-  changeVolume(event: any) {
-    if (isPlatformBrowser(this.platformId)) {
-      const newVolume = parseFloat(event.target.value);
-      this.volumeText = Math.round(newVolume * 100) + '%';
-      
-      const audios = document.querySelectorAll('audio');
-      audios.forEach(audio => {
-        audio.volume = newVolume;
-      });
-    }
+  toggleMusic(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    this.isMusicOn = !this.isMusicOn;
+    document.querySelectorAll<HTMLAudioElement>('audio').forEach(audio => {
+      if (!this.isMusicOn) {
+        audio.pause();
+        audio.muted = true;
+      } else {
+        audio.muted = false;
+        audio.volume = this.privacy.readAudioVolume();
+        audio.play().catch(() => {
+          this.isMusicOn = false;
+          this.cdr.markForCheck();
+        });
+      }
+    });
+    this.cdr.markForCheck();
   }
 }

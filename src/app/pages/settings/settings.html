@@ -1,38 +1,221 @@
-<section class="bg-dark text-light py-5 min-vh-100">
-  <div class="container" style="max-width: 960px;">
+<section class="account-page bg-dark text-light py-5 min-vh-100">
+  <div class="container" style="max-width: 1240px;">
     @if (user) {
-      <a routerLink="/" class="text-warning text-decoration-none">← Volver a la tienda</a>
-      <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mt-3 mb-4">
-        <div>
-          <p class="text-warning small fw-bold text-uppercase mb-1">Mi cuenta</p>
-          <h1 class="text-warning fw-bold mb-1">⚙️ Ajustes de cuenta</h1>
-          <p class="text-secondary mb-0">Bienvenido, {{ user.name }}.</p>
-        </div>
-        <button class="btn btn-outline-danger fw-bold" (click)="logout()">Cerrar sesión</button>
+      <p class="small text-secondary mb-3"><a routerLink="/" class="text-warning text-decoration-none">Inicio</a> › Mi cuenta</p>
+      <div class="account-heading mb-4">
+        <h1 class="text-warning fw-bold mb-1">Mi cuenta</h1>
+        <p class="text-light-emphasis mb-0">Administra tu información, métodos de pago y preferencias.</p>
       </div>
 
-      <div class="card bg-black border border-secondary text-light mb-4 shadow">
-        <div class="card-body p-4">
-          <h2 class="h5 text-warning fw-bold">Información de tu cuenta</h2>
-          <p class="mb-1"><strong>Nombre:</strong> {{ user.name }}</p>
-          <p class="mb-1"><strong>Correo:</strong> {{ user.email }}</p>
-          <p class="mb-0 text-secondary small">Tus preferencias se administran desde esta cuenta.</p>
-        </div>
-      </div>
+      <div class="row g-4">
+        <aside class="col-lg-3">
+          <div class="account-sidebar">
+            <div class="account-avatar">👤</div>
+            <h2 class="h5 fw-bold mb-1">{{ user.name }}</h2>
+            <p class="small text-secondary text-break mb-4">{{ user.email }}</p>
+            <nav class="account-links" aria-label="Secciones de mi cuenta">
+              <button type="button" [class.active]="currentTab === 'perfil'" (click)="chooseTab('perfil')">👤 <span>Perfil</span></button>
+              <button type="button" [class.active]="currentTab === 'ajustes'" (click)="chooseTab('ajustes')">⚙️ <span>Ajustes</span></button>
+              <button type="button" [class.active]="currentTab === 'pagos'" (click)="chooseTab('pagos')">💳 <span>Métodos de pago</span></button>
+              <button type="button" [class.active]="currentTab === 'direcciones'" (click)="chooseTab('direcciones')">📍 <span>Direcciones</span></button>
+              <button type="button" [class.active]="currentTab === 'notificaciones'" (click)="chooseTab('notificaciones')">🔔 <span>Notificaciones</span></button>
+              <button type="button" [class.active]="currentTab === 'cookies'" (click)="chooseTab('cookies')">🍪 <span>Cookies y privacidad</span></button>
+              <button type="button" class="logout-button" (click)="logout()">🚪 <span>Cerrar sesión</span></button>
+            </nav>
+          </div>
+        </aside>
 
-      <div class="card bg-black border border-warning text-light shadow">
-        <div class="card-body p-4">
-          <h2 class="h5 text-warning fw-bold">Documentos y privacidad</h2>
-          <p class="text-secondary">Consulta en cualquier momento las condiciones comerciales aceptadas al crear tu cuenta.</p>
-          <button type="button" class="btn btn-warning fw-bold" (click)="toggleTerms()" [attr.aria-expanded]="showTerms" aria-controls="texto-terminos">
-            {{ showTerms ? 'Ocultar Términos y Condiciones' : 'Ver Términos y Condiciones' }}
-          </button>
-          <a routerLink="/legal/privacidad" class="btn btn-outline-warning ms-2 mt-2 mt-sm-0">Aviso de Privacidad</a>
-          @if (showTerms) {
-            <div id="texto-terminos" class="terms-wrapper mt-4 p-3 p-md-4 bg-dark rounded border border-secondary">
-              <app-terms-content></app-terms-content>
-            </div>
-          }
+        <div class="col-lg-9">
+          <div class="account-panel">
+            @if (currentTab === 'perfil') {
+              <p class="account-kicker">Información personal</p>
+              <h2 class="text-warning fw-bold mb-2">Tu perfil</h2>
+              <p class="text-light-emphasis mb-4">Consulta los datos de tu cuenta y accede rápidamente a tus pedidos.</p>
+              <div class="account-detail-grid">
+                <div class="detail-tile"><span>Nombre de usuario</span><strong>{{ user.name }}</strong></div>
+                <div class="detail-tile"><span>Correo electrónico</span><strong class="text-break">{{ user.email }}</strong></div>
+              </div>
+              <div class="account-inner-panel mt-4">
+                <h3 class="h5 text-warning fw-bold">Pedidos y comprobantes</h3>
+                <p class="text-light-emphasis">Consulta pedidos pendientes, entregados y cancelados.</p>
+                <a routerLink="/mis-pedidos" class="btn btn-warning fw-bold text-dark me-2">Ir a Mis pedidos</a>
+                <a routerLink="/tracker" class="btn btn-outline-info fw-bold">Ver tracker</a>
+              </div>
+            }
+
+            @if (currentTab === 'ajustes') {
+              <p class="account-kicker">Personalización y privacidad</p>
+              <h2 class="text-warning fw-bold mb-2">Ajustes de cuenta</h2>
+              <p class="text-light-emphasis mb-4">Elige cómo quieres utilizar Memo's Pizza.</p>
+              <div class="account-inner-panel mb-4">
+                <h3 class="h5 text-light fw-bold mb-3">Volumen de la música</h3>
+                <p class="text-light-emphasis">Ajusta el volumen del audio mientras visitas Memo's Pizza.</p>
+                <label for="account-volume" class="form-label text-light fw-semibold">Volumen: {{ volume * 100 | number:'1.0-0' }}%</label>
+                <input id="account-volume" class="form-range" type="range" min="0" max="1" step="0.01" [value]="volume" (input)="changeVolume($event)">
+                <p class="small text-secondary mt-2 mb-0">Para recordar tu elección en próximas visitas, entra al apartado «Cookies y privacidad».</p>
+              </div>
+              <div class="account-inner-panel">
+                <h3 class="h5 text-warning fw-bold">Documentos y privacidad</h3>
+                <p class="text-light-emphasis">Consulta las condiciones comerciales y cómo tratamos tus datos.</p>
+                <button type="button" class="btn btn-outline-warning me-2" (click)="toggleTerms()" [attr.aria-expanded]="showTerms" aria-controls="texto-terminos">
+                  {{ showTerms ? 'Ocultar Términos' : 'Términos y Condiciones' }}
+                </button>
+                <a routerLink="/legal/privacidad" class="btn btn-outline-light">Aviso de privacidad</a>
+                @if (showTerms) {
+                  <div id="texto-terminos" class="terms-wrapper mt-4 p-3 bg-dark rounded border border-secondary"><app-terms-content></app-terms-content></div>
+                }
+              </div>
+            }
+
+            @if (currentTab === 'pagos') {
+              <p class="account-kicker">Tus métodos de pago</p>
+              <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-3">
+                <div>
+                  <h2 class="text-warning fw-bold mb-1">Tarjetas guardadas</h2>
+                  <p class="text-light-emphasis mb-0">Consulta y elimina las tarjetas que recuerdas para tus compras.</p>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                  <button class="btn btn-warning text-dark fw-bold" type="button" (click)="toggleAddCardForm()" [attr.aria-expanded]="showAddCardForm" aria-controls="memos-add-card-form">
+                    {{ showAddCardForm ? 'Cerrar formulario' : '＋ Agregar tarjeta' }}
+                  </button>
+                  @if (savedDemoCards.length) { <button class="btn btn-outline-danger btn-sm" type="button" (click)="removeAllDemoCards()">Eliminar todas</button> }
+                </div>
+              </div>
+              @if (cardNotice) { <p class="text-success fw-semibold">{{ cardNotice }}</p> }
+              @if (savedDemoCards.length) {
+                @for (card of savedDemoCards; track card.id) {
+                  <div class="saved-card-row">
+                    <div class="saved-card-logo">{{ card.brand === 'visa' ? 'VISA' : '💳' }}</div>
+                    <div class="flex-grow-1">
+                      <h3 class="h6 text-light fw-bold mb-1">{{ card.nickname }} · •••• {{ card.last4 }}</h3>
+                      <p class="small text-light-emphasis mb-1">Titular: {{ card.holder }}</p>
+                      <p class="small text-secondary mb-0">Vence: {{ card.expiry }}</p>
+                    </div>
+                    <button class="btn btn-outline-danger btn-sm" type="button" (click)="removeDemoCard(card.id)">Eliminar</button>
+                  </div>
+                }
+              } @else {
+                <div class="account-inner-panel"><p class="text-light mb-0">Aún no hay tarjetas guardadas. Pulsa «Agregar tarjeta» para registrar una aquí mismo.</p></div>
+              }
+              @if (showAddCardForm) {
+                <div class="add-card-form account-inner-panel mt-3" id="memos-add-card-form" role="region" aria-label="Agregar tarjeta de prueba">
+                  <div class="d-flex justify-content-between flex-wrap align-items-start gap-2 mb-3">
+                    <div>
+                      <h3 class="h5 text-warning fw-bold mb-1">Agregar nueva tarjeta</h3>
+                      <p class="text-light-emphasis mb-0 small">Elige una tarjeta de prueba y registra cómo quieres identificarla.</p>
+                    </div>
+                    <span class="badge text-bg-warning text-dark">(Todo es con fines académicos)</span>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label text-light fw-semibold" for="new-card-alias">Alias de la tarjeta (opcional)</label>
+                    <input id="new-card-alias" class="form-control account-input" type="text" maxlength="28" autocomplete="off" placeholder="Ej. Mi tarjeta personal" [(ngModel)]="newCardAlias">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label text-light fw-semibold" for="new-card-holder">Nombre del titular</label>
+                    <input id="new-card-holder" class="form-control account-input" type="text" maxlength="90" autocomplete="off" placeholder="Nombre ficticio para esta cuenta" [(ngModel)]="newCardHolder">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label text-light fw-semibold" for="new-card-number">Tarjeta</label>
+                    <input id="new-card-number" class="form-control account-input" type="text" inputmode="numeric" maxlength="19" autocomplete="off" placeholder="Selecciona una de las tarjetas de prueba" [value]="newCardNumber" readonly>
+                    <div class="d-flex flex-wrap gap-2 mt-2">
+                      @for (test of testCards; track test.label) {
+                        <button class="btn btn-outline-warning btn-sm" type="button" (click)="chooseTestCard(test.number)">{{ test.label }} · {{ test.number.slice(-4) }}</button>
+                      }
+                    </div>
+                    <p class="small text-secondary mt-2 mb-0">No ingreses números de tarjetas reales. Solo se guardarán los últimos cuatro dígitos.</p>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label text-light fw-semibold" for="new-card-expiry">Vencimiento</label>
+                    <input id="new-card-expiry" class="form-control account-input" type="text" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="MM/AA" [(ngModel)]="newCardExpiry" (input)="formatNewCardExpiry()">
+                    <p class="small text-secondary mt-2 mb-0">El CVV se solicitará únicamente al confirmar una compra; nunca se guarda.</p>
+                  </div>
+                  @if (newCardError) {
+                    <div class="alert alert-danger" role="alert">{{ newCardError }}</div>
+                  }
+                  <div class="d-flex gap-2 flex-wrap">
+                    <button type="button" class="btn btn-warning fw-bold text-dark" (click)="saveNewDemoCard()">Guardar tarjeta</button>
+                    <button type="button" class="btn btn-outline-light" (click)="toggleAddCardForm()">Cancelar</button>
+                  </div>
+                </div>
+              }
+              <p class="academic-note mt-4">Solo se guardan datos descriptivos de tarjetas ficticias: alias, titular, vencimiento y últimos cuatro dígitos. No se almacena el número completo ni el CVV. (Todo es con fines académicos).</p>
+            }
+
+            @if (currentTab === 'direcciones') {
+              <p class="account-kicker">Tus lugares de entrega</p>
+              <h2 class="text-warning fw-bold mb-2">Direcciones</h2>
+              <p class="text-light-emphasis mb-4">Revisa o modifica tu dirección de entrega actual.</p>
+              @if (address) {
+                <div class="account-inner-panel mb-3">
+                  <h3 class="h5 text-light fw-bold">{{ address.customerName }}</h3>
+                  <p class="text-light mb-1">{{ address.address }}</p>
+                  <p class="text-light mb-1">{{ address.neighborhood }}</p>
+                  <p class="text-secondary mb-0">{{ address.phone }}</p>
+                </div>
+              } @else {
+                <p class="text-light">Todavía no tienes una dirección de entrega asignada.</p>
+              }
+              <a routerLink="/ordena-online" class="btn btn-warning text-dark fw-bold">{{ address ? 'Editar dirección' : 'Agregar dirección' }}</a>
+              <p class="small text-secondary mt-3 mb-0">Tu dirección se recuerda entre visitas solo si activas esa preferencia.</p>
+            }
+
+            @if (currentTab === 'notificaciones') {
+              <p class="account-kicker">Actividad de tus pedidos</p>
+              <h2 class="text-warning fw-bold mb-2">Notificaciones</h2>
+              <p class="text-light-emphasis mb-4">Revisa el estado de tus compras y accede a sus detalles.</p>
+              <div class="account-inner-panel mb-3">
+                <strong class="text-warning">{{ pendingOrders }} pedidos en curso</strong>
+                <p class="text-light-emphasis small mb-0">Los estados cambian automáticamente y se muestran en Mis pedidos y el Tracker.</p>
+              </div>
+              @for (order of recentOrders; track order.id) {
+                <div class="notification-item mb-2">
+                  <strong>{{ order.folio }} · {{ ordersService.getStatusLabel(ordersService.getEffectiveStatus(order)) }}</strong>
+                  <span class="small text-secondary d-block mt-1">{{ order.payment.paidAt }} · ${{ order.total | number:'1.2-2' }}</span>
+                </div>
+              } @empty {
+                <p class="text-secondary">No hay actividad de pedidos por mostrar.</p>
+              }
+              <a routerLink="/mis-pedidos" class="btn btn-outline-warning mt-3">Ver todos mis pedidos</a>
+              <p class="small text-secondary mt-3 mb-0">Esta sección muestra el historial guardado localmente; todavía no envía notificaciones push ni mensajes al correo.</p>
+            }
+
+            @if (currentTab === 'cookies') {
+              <p class="account-kicker">Tus preferencias de privacidad</p>
+              <h2 class="text-warning fw-bold mb-2">Cookies y almacenamiento</h2>
+              <p class="text-light-emphasis mb-4">Tú decides qué información opcional recuerda Memo's Pizza en este navegador. Puedes cambiar tu elección cuando quieras.</p>
+
+              <div class="account-inner-panel mb-3">
+                <div class="switch-row">
+                  <span><strong>Almacenamiento necesario</strong><small>Permite conservar tu carrito, tu sesión y el pedido actual. Siempre está activo.</small></span>
+                  <input id="account-cookies-essential" type="checkbox" class="form-check-input" checked disabled aria-label="Almacenamiento necesario siempre activo">
+                </div>
+                <label class="switch-row" for="account-cookies-audio">
+                  <span><strong>Recordar el volumen</strong><small>Guarda tu volumen preferido para tus próximas visitas.</small></span>
+                  <input id="account-cookies-audio" type="checkbox" class="form-check-input" role="switch" [(ngModel)]="rememberVolume">
+                </label>
+                <label class="switch-row" for="account-cookies-address">
+                  <span><strong>Recordar mi dirección de entrega</strong><small>Conserva los datos de entrega para futuras compras en este dispositivo.</small></span>
+                  <input id="account-cookies-address" type="checkbox" class="form-check-input" role="switch" [(ngModel)]="rememberAddress">
+                </label>
+                <div class="switch-row border-0">
+                  <span><strong>Publicidad y estadísticas</strong><small>Esta versión no utiliza cookies publicitarias ni de analítica.</small></span>
+                  <input id="account-cookies-analytics" type="checkbox" class="form-check-input" disabled aria-label="Publicidad y analítica no utilizadas">
+                </div>
+                <div class="d-flex flex-wrap gap-2 mt-4 align-items-center">
+                  <button type="button" class="btn btn-warning fw-bold text-dark" (click)="savePrivacyOptions()">Guardar mis preferencias</button>
+                  <button type="button" class="btn btn-outline-light" (click)="openCookiePreferences()">Abrir panel de privacidad</button>
+                </div>
+                @if (cookieNotice) { <p class="text-success fw-semibold mt-3 mb-0" role="status">{{ cookieNotice }}</p> }
+              </div>
+              <div class="account-inner-panel">
+                <h3 class="h5 text-warning fw-bold mb-2">Información y permisos</h3>
+                <p class="text-light-emphasis">La ubicación es un permiso independiente del navegador; no se activa al aceptar cookies. Puedes rechazarla y escribir tu domicilio manualmente.</p>
+                <p class="text-light-emphasis">Consulta qué se guarda y por qué en nuestros documentos.</p>
+                <a routerLink="/legal/cookies" class="btn btn-outline-warning me-2 mb-2">Política de cookies</a>
+                <a routerLink="/legal/privacidad" class="btn btn-outline-light mb-2">Aviso de privacidad</a>
+              </div>
+            }
+          </div>
         </div>
       </div>
     } @else {

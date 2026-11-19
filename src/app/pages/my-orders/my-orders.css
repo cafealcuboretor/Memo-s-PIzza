@@ -1,0 +1,246 @@
+.stat-card {
+  background: linear-gradient(180deg, rgba(20, 23, 29, 0.95), rgba(8, 9, 13, 0.98));
+  border: 1px solid #404653;
+  border-radius: 18px;
+  padding: 1.25rem;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.stat-label {
+  color: #adb5bd;
+  font-size: 0.95rem;
+}
+
+.order-card,
+.history-item,
+.empty-state {
+  background: #171a20;
+  border: 1px solid #343a40;
+  border-radius: 16px;
+  padding: 1rem 1.1rem;
+}
+
+.order-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.order-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.status-pill {
+  font-size: 0.78rem;
+  padding: 0.45rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.status-pagado { background: rgba(13, 110, 253, 0.14); color: #8cb6ff; border-color: rgba(13, 110, 253, 0.35); }
+.status-preparando { background: rgba(255, 193, 7, 0.15); color: #ffe08a; border-color: rgba(255, 193, 7, 0.35); }
+.status-horneando { background: rgba(255, 140, 0, 0.15); color: #ffbd73; border-color: rgba(255, 140, 0, 0.35); }
+.status-empaquetando { background: rgba(111, 66, 193, 0.15); color: #cab3ff; border-color: rgba(111, 66, 193, 0.35); }
+.status-en-camino { background: rgba(32, 201, 151, 0.15); color: #75f5d0; border-color: rgba(32, 201, 151, 0.35); }
+.status-entregado { background: rgba(25, 135, 84, 0.16); color: #86efac; border-color: rgba(25, 135, 84, 0.35); }
+.status-cancelado { background: rgba(220, 53, 69, 0.16); color: #ff9ead; border-color: rgba(220, 53, 69, 0.35); }
+
+.receipt-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 100000;
+}
+
+.receipt-modal {
+  width: min(880px, 100%);
+  max-height: 92vh;
+  overflow: auto;
+  background: #101318;
+  border: 1px solid #ffc107;
+  border-radius: 22px;
+  padding: 1.25rem;
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.45);
+}
+
+.receipt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.85rem;
+}
+
+.receipt-block,
+.delivery-box,
+.receipt-total-box,
+.receipt-product-row {
+  background: #181c22;
+  border: 1px solid #303641;
+  border-radius: 14px;
+}
+
+.receipt-block {
+  padding: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.receipt-block .label {
+  color: #9ca3af;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.receipt-products {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.receipt-product-row {
+  padding: 0.9rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.delivery-box,
+.receipt-total-box {
+  padding: 1rem;
+}
+
+.total-line {
+  border-top: 1px solid #303641;
+  padding-top: 0.8rem;
+  margin-top: 0.8rem;
+  color: #ffc107;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 767px) {
+  .history-item,
+  .receipt-product-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .order-meta {
+    gap: 0.45rem;
+    flex-direction: column;
+  }
+}
+
+/* Accesibilidad: contraste claro en los comprobantes sobre fondos oscuros. */
+.receipt-modal,
+.receipt-modal .receipt-block,
+.receipt-modal .receipt-product-row,
+.receipt-modal .delivery-box,
+.receipt-modal .receipt-total-box {
+  color: #eff4fa;
+}
+
+.receipt-modal .receipt-block strong,
+.receipt-modal .receipt-product-row strong,
+.receipt-modal .delivery-box strong,
+.receipt-modal .receipt-total-box span,
+.receipt-modal .receipt-total-box strong,
+.receipt-modal .receipt-block .label + strong {
+  color: #fff !important;
+  opacity: 1;
+}
+
+.receipt-modal .receipt-block small,
+.receipt-modal .receipt-block .label,
+.receipt-modal .receipt-product-row .small,
+.receipt-modal .delivery-box p,
+.receipt-modal .receipt-products .text-secondary {
+  color: #c4ceda !important;
+  opacity: 1;
+}
+
+.receipt-modal .receipt-total-box .total-line span,
+.receipt-modal .receipt-total-box .total-line strong {
+  color: #ffc107 !important;
+}
+
+.receipt-modal .receipt-block,
+.receipt-modal .receipt-product-row,
+.receipt-modal .delivery-box,
+.receipt-modal .receipt-total-box {
+  background: #20252c;
+  border-color: #48515d;
+}
+
+.receipt-modal .receipt-block {
+  overflow-wrap: anywhere;
+}
+
+.receipt-modal .receipt-block small {
+  font-size: .81rem;
+}
+
+/* Información legible dentro de la página Mis pedidos. */
+.order-card .text-secondary,
+.order-card .order-meta,
+.history-item .text-secondary,
+.empty-state .text-secondary {
+  color: #b7c2d0 !important;
+}
+
+.order-card .order-meta span,
+.order-card .order-meta strong,
+.history-item .fw-bold {
+  color: #ecf2fa !important;
+}
+
+.order-card,
+.history-item,
+.empty-state {
+  border-color: #414a57;
+}
+
+/* Evitar que el contraste dependa del tema global de Bootstrap. */
+.receipt-backdrop .receipt-modal h3,
+.receipt-backdrop .receipt-modal h4,
+.receipt-backdrop .receipt-modal .fw-bold {
+  color: #f6f8fc;
+}
+.receipt-demo-notice {
+  background: rgba(255, 193, 7, .075);
+  border: 1px solid rgba(255, 193, 7, .3);
+  border-radius: 10px;
+  padding: .7rem .85rem;
+  color: #f5d98b !important;
+  font-size: .78rem;
+  line-height: 1.5;
+}
+
+/* Motivos y reembolsos */
+.cancel-modal { max-width: 540px; }
+.cancel-input, .cancel-input:focus { background-color:#1b2028; border:1px solid #657181; color:#fff; box-shadow:none; }
+.cancel-input::placeholder { color:#a9b3bf; }
+.cancel-input option { background-color:#1b2028; color:#fff; }
+.cancel-countdown { background:rgba(255,193,7,.09); border:1px solid rgba(255,193,7,.4); border-radius:12px; padding:11px 14px; }
+.refund-explainer, .refund-status-card { background:#1a2028; border:1px solid rgba(255,193,7,.45); border-radius:12px; padding:14px; }
+.status-pill { font-weight:700; }
+.order-card p, .order-card .order-meta, .receipt-modal .receipt-block small { color:#c8d1db !important; }

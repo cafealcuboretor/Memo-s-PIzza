@@ -10,4 +10,7 @@ import { RouterLink } from '@angular/router';
 })
 export class Footer {
   currentYear = new Date().getFullYear();
+  showCookiePreferences() {
+    if (typeof window !== 'undefined') window.dispatchEvent(new Event('memos-open-cookies'));
+  }
 }

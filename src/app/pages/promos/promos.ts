@@ -26,7 +26,7 @@ export class Promos {
       name: 'COMBO GUARDIA NOCTURNA', 
       description: '2 Pizzas Grandes Pepperoni + 2 Bebidas + Pan de Ajo.', 
       price: 249.00, 
-      image: '/Combo Guardia Nocturna.webp', 
+      image: '/assets/memos/promociones/combo-guardia.webp', 
       badgeText: '30% OFF', 
       badgeColor: 'bg-danger' 
     },
@@ -35,7 +35,7 @@ export class Promos {
       name: 'LA FAVORITA DE MEMO', 
       description: 'Lleva dos pizzas medianas de especialidad al precio de una.', 
       price: 199.00, 
-      image: '/La Favorita de Memo.webp', 
+      image: '/assets/memos/promociones/dos-por-uno.webp', 
       badgeText: '2x1', 
       badgeColor: 'bg-danger' 
     },
@@ -44,7 +44,7 @@ export class Promos {
       name: 'ESPECIAL ANIMATRÓNICO', 
       description: 'Pizza Familiar de Carnes Frías + Orilla de Queso rellena.', 
       price: 299.00, 
-      image: '/Especial Animatrónico.webp', 
+      image: '/assets/memos/promociones/pizza-especial.webp', 
       badgeText: 'PROMO', 
       badgeColor: 'bg-success' 
     },
@@ -53,9 +53,18 @@ export class Promos {
       name: 'POSTRE DE LA OFICINA', 
       description: 'Pastelillo de chocolate oscuro con chispa sorpresa.', 
       price: 89.00, 
-      image: '/Postre de la Oficina.webp', 
+      image: '/assets/memos/promociones/postres.webp', 
       badgeText: 'NUEVO', 
       badgeColor: 'bg-warning text-dark' 
+    },
+    {
+      id: 'combo-memo-refresco',
+      name: 'COMBO MEMO CON REFRESCO',
+      description: 'Pizza de pepperoni, refresco de fresa y un mini postre. Disponible dentro de nuestras promociones; sujeta a disponibilidad.',
+      price: 279.00,
+      image: '/assets/memos/promociones/combo-refresco.webp',
+      badgeText: 'COMBO',
+      badgeColor: 'bg-danger'
     }
   ];
 
@@ -66,7 +75,9 @@ export class Promos {
       id: promo.id,
       name: promo.name,
       price: promo.price,
-      emoji: '🍕'
+      emoji: '🍕',
+      image: promo.image,
+      category: 'promociones'
     });
   }
 }

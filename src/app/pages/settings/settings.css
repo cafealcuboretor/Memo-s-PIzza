@@ -1,1 +1,40 @@
-.terms-wrapper { max-height: 72vh; overflow-y: auto; overscroll-behavior: contain; }
+.terms-wrapper{max-height:70vh;overflow-y:auto;overscroll-behavior:contain}
+.account-page{background:radial-gradient(circle at top right,rgba(255,193,7,.07),transparent 35%),#171b21!important;min-height:100vh}
+.account-heading{border-bottom:1px solid #3a4049;padding-bottom:1rem}
+.account-sidebar,.account-panel{background:linear-gradient(180deg,#11151b,#080b10);border:1px solid #414852;border-radius:20px;padding:1.4rem;box-shadow:0 15px 35px rgba(0,0,0,.22)}
+.account-sidebar{position:sticky;top:95px}
+.account-avatar{width:60px;height:60px;border:2px solid #ffc107;border-radius:50%;display:grid;place-items:center;background:#242a33;font-size:1.6rem;margin-bottom:.8rem}
+.account-links{display:grid;gap:.35rem}
+.account-links button{background:transparent;border:1px solid transparent;color:#edf0f5;text-align:left;padding:.76rem .9rem;border-radius:10px;font-weight:650;display:flex;align-items:center;gap:.7rem;cursor:pointer}
+.account-links button:hover{background:#252c36}
+.account-links button.active{background:#ffc107;color:#111418}
+.account-links button.logout-button{margin-top:.6rem;border-top:1px solid #353c45;border-radius:0;color:#ff9e9e}
+.account-kicker{color:#aeb9c6;font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;margin-bottom:.5rem}
+.account-detail-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem}
+.detail-tile,.account-inner-panel,.saved-card-row,.notification-item{background:#171d26;border:1px solid #3a434e;border-radius:14px;padding:1rem}
+.detail-tile span{color:#b7c1cc;display:block;font-size:.86rem;margin-bottom:.4rem}
+.detail-tile strong{color:#fff}
+.saved-card-row{display:flex;align-items:center;gap:1rem;margin-bottom:.8rem}
+.saved-card-logo{background:#1241a2;color:#fff;border-radius:9px;padding:1rem;font-size:1rem;font-weight:800}
+.academic-note{border:1px solid #66551a;border-radius:12px;padding:1rem;background:#25230d;color:#fff1b7}
+.switch-row{display:flex;justify-content:space-between;gap:1rem;align-items:center;padding:.6rem 0;border-bottom:1px solid #35404a}
+.switch-row span strong{display:block;color:#fff}
+.switch-row span small{display:block;color:#bac4cf;margin-top:.2rem}
+.switch-row .form-check-input{float:none;flex-shrink:0;height:1.25rem;width:2.25rem;cursor:pointer}
+.account-panel p,.account-sidebar p{line-height:1.6}
+@media(max-width:991px){.account-sidebar{position:static}.account-links{grid-template-columns:repeat(2,minmax(0,1fr))}.account-panel{padding:1rem}}
+@media(max-width:560px){.account-links{grid-template-columns:1fr}.saved-card-row{flex-wrap:wrap}}
+
+/* Formulario integrado en Métodos de pago: legible en temas oscuros. */
+.add-card-form{margin-top:1.2rem;border-color:#c18e00;background:linear-gradient(180deg,#161c24,#0e1319)}
+.add-card-form .account-input{background:#232a34!important;color:#fff!important;border:1px solid #667386;border-radius:10px;min-height:46px}
+.add-card-form .account-input:focus{background:#28313d!important;color:#fff!important;border-color:#ffc107!important;box-shadow:0 0 0 .2rem rgba(255,193,7,.15)}
+.add-card-form .account-input::placeholder{color:#aeb7c4;opacity:1}
+.add-card-form .account-input:-webkit-autofill,
+.add-card-form .account-input:-webkit-autofill:hover,
+.add-card-form .account-input:-webkit-autofill:focus{-webkit-text-fill-color:#fff!important;box-shadow:0 0 0 1000px #232a34 inset!important;caret-color:#fff}
+.add-card-form .form-label{color:#f4f6fa!important}
+.add-card-form .alert-danger{color:#5f0d17;background:#f8d7da;border-color:#f1aeb5}
+.account-links button{line-height:1.3}
+.account-panel .form-check-input:checked{background-color:#ffc107;border-color:#ffc107}
+.account-panel .form-check-input:focus{box-shadow:0 0 0 .2rem rgba(255,193,7,.18)}

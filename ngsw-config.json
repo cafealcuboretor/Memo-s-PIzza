@@ -12,7 +12,9 @@
           "/index.html",
           "/manifest.webmanifest",
           "/*.css",
-          "/*.js"
+          "/*.js",
+          "/assets/memos/offline/cabeza-error-pixel.png",
+          "/show/index.html"
         ]
       }
     },

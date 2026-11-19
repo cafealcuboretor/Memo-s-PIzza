@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#10070f" />
+  <title>Memo's Pizza · Show de animatrónicos</title>
+  <style>
+    :root { color-scheme:dark; --gold:#ffcc18; --red:#f94354; --edge:#e6a713; --cyan:#65dcff; --ink:#0b0b0e; --panel:#15131d; --muted:#a9a2b2; font-family:system-ui,-apple-system,'Segoe UI',Arial,sans-serif; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; color:#fff; background: radial-gradient(ellipse at 50% 8%,#2b142d 0%,#100c17 55%,#07080c 100%); }
+    .shell { max-width:1100px; margin:0 auto; padding:12px 14px 16px; }
+    header { display:flex; justify-content:space-between; gap:12px; align-items:center; padding:6px 2px 13px; }
+    .brand { display:flex; align-items:center; gap:10px; min-width:0; }
+    .logo { height:53px; width:53px; border-radius:50%; object-fit:cover; border:2px solid #ffd447; box-shadow:0 0 16px #c83b32aa; }
+    .brand h1 { margin:0; font-size:clamp(17px,3vw,25px); font-weight:1000; line-height:1; letter-spacing:.02em; color:var(--gold); text-shadow:0 0 13px #ec611c77; }
+    .brand p { margin:5px 0 0; color:#cabcca; font-weight:650; font-size:10px; letter-spacing:.17em; }
+    .live { font-size:11px; color:#baf9c9; display:flex; align-items:center; gap:8px; white-space:nowrap; font-weight:700; }
+    .live i { width:8px; height:8px; border-radius:100%; background:#7cfd8e; box-shadow:0 0 12px #60ff8a; animation:pulse 1.3s infinite alternate; }
+    .theater { padding:7px; border:2px solid #e5b622; border-radius:17px; overflow:hidden; background:#120d15; box-shadow:0 18px 50px #000a, 0 0 29px #fd7b2220; }
+    .theater-top { display:flex; justify-content:space-between; gap:10px; align-items:center; padding:8px 13px; font-size:11px; font-weight:850; letter-spacing:.13em; background:linear-gradient(90deg,#291116,#1a1421,#2e1518); border-bottom:1px solid #8e642b; border-radius:10px 10px 0 0; }
+    .theater-top strong { color:#ffe190; } .theater-top span { color:#d9bacc; }
+    .stage { position:relative; width:100%; aspect-ratio:16 / 8.1; min-height:260px; background:#0e0715; isolation:isolate; overflow:hidden; }
+    .stage-image { display:block; position:absolute; width:100%; height:100%; object-fit:cover; inset:0; transform:scale(1.09); transition:transform .65s cubic-bezier(.19,1,.22,1), filter .4s; filter:contrast(1.12) saturate(1.2) brightness(.96); }
+    .stage.scene-dark .stage-image { filter:brightness(.38) contrast(1.2) saturate(.6); }
+    .stage:not(.scene-dark).scene-blue .stage-image { filter:hue-rotate(12deg) saturate(1.55) contrast(1.06); }
+    .stage:not(.scene-dark).scene-red .stage-image { filter:sepia(.24) saturate(1.8) contrast(1.17); }
+    .stage.no-motion .stage-image, .stage.no-motion .beam { animation:none !important; transition:none !important; }
+    .stage-vignette { position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse at center,transparent 38%,#05000966 90%),linear-gradient(to top,#07030bba,transparent 37%); }
+    .bulb-row { position:absolute; top:0; left:8px; right:8px; display:flex; justify-content:space-around; z-index:5; pointer-events:none; }
+    .bulb { width:9px; height:9px; border-radius:50%; background:#ffde65; box-shadow:0 0 13px 5px #ffd3496e; animation:blink 1.25s alternate infinite; }
+    .bulb:nth-child(3n){animation-delay:-.5s;background:#ff7081;} .bulb:nth-child(4n){animation-delay:-.9s;background:#a7e7ff;}
+    .beam { position:absolute; top:-17%; width:54%; height:135%; mix-blend-mode:screen; opacity:.38; clip-path:polygon(48% 0,52% 0,100% 95%,0 95%); background:linear-gradient(#ffca5575,transparent 86%); pointer-events:none; animation:beam 4.5s ease-in-out infinite alternate; }
+    .beam.a{left:-10%;transform-origin:50% 0;} .beam.b{left:24%;animation-delay:-2s;background:linear-gradient(#f36c9275,transparent 86%);} .beam.c{right:-10%;animation-delay:-3.8s;background:linear-gradient(#71dfff77,transparent 86%);}
+    .stage.scene-dark .beam { opacity:.05; }.stage.scene-dark .bulb{opacity:.13;}
+    .scanline { position:absolute; inset:0; pointer-events:none; opacity:.13; background:repeating-linear-gradient(to bottom,transparent 0 3px,#050505a2 3px 4px); }
+    .tag {position:absolute; left:18px; top:23px; padding:5px 10px; border:1px solid #ffe59d8c; border-radius:999px; background:#0a0a0c99; font-weight:800; font-size:10px; letter-spacing:.11em; z-index:6; backdrop-filter:blur(6px);}
+    .tag b { color:#ff4454; padding-right:6px; }
+    #confetti { position:absolute; inset:0; pointer-events:none; z-index:7; overflow:hidden; }
+    .confetti-bit { position:absolute; top:-9%; width:8px; height:14px; border-radius:1px; opacity:.95; animation:confetti var(--duration) linear forwards; transform:rotate(var(--rot)); }
+    .marquee { display:flex; align-items:center; justify-content:center; gap:14px; padding:6px 9px; background:#261313; font-weight:850; font-size:11px; letter-spacing:.14em; color:#ffdb7b; border-radius:0 0 9px 9px; }
+    .marquee em {color:#f64653;font-style:normal;}
+    .control-grid {display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; margin-top:0; align-items:stretch;}
+    .panel { background:linear-gradient(#1b1920,#101116); border:1px solid #484052; padding:12px; border-radius:13px; min-width:0; }
+    h2 {color:var(--gold); font-size:13px; text-transform:uppercase; margin:0 0 10px; letter-spacing:.08em;}
+    button,select {font-family:inherit;}
+    .effects {display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+    .effect-btn {color:#f9f0e9; background:#26212b; border:1px solid #675067; border-radius:9px; min-height:43px; font-size:11px; font-weight:850; cursor:pointer;}
+    .effect-btn:hover,.track-btn:hover,.curtain-toggle:hover{filter:brightness(1.12)}
+    .effect-btn.primary{background:#f4b920;color:#251503;border-color:#ffe28b;}
+    .jukebox {display:flex;flex-direction:column;gap:7px;}
+    .song-select {width:100%;background:#100d16;color:#fff;border:1px solid #8a5c4e;border-radius:8px;padding:9px;font-size:11px;min-width:0;text-overflow:ellipsis;}
+    .effect-btn:focus-visible,.track-btn:focus-visible,.curtain-toggle:focus-visible,.song-select:focus-visible {outline:2px solid #ffdb68;outline-offset:2px;}
+    .row {display:flex;gap:7px;}
+    .track-btn {flex:1;min-height:40px;border:1px solid #ffcc36;background:#ffcc36;color:#281b02;font-weight:850;border-radius:9px;cursor:pointer;font-size:11px;}
+    .track-btn.secondary {background:#19191f;color:#fff;border-color:#777184;}
+    .note { color:#aea7b5; margin:9px 0 0; font-size:10px; line-height:1.5; }
+    .footer {display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap; font-size:10px; color:#b5a5b1;padding:11px 2px 0;}
+    .footer strong {color:#fbd564;}
+    /* Nuevos efectos escénicos, sin destellos blancos. */
+    .curtain-set {position:absolute;inset:0;display:flex;z-index:9;pointer-events:none;overflow:hidden;}
+    .show-curtain {height:100%;width:50%;background:repeating-linear-gradient(90deg,#44050b 0%,#971625 7%,#58060e 14%);box-shadow:inset 0 0 45px #160308;transition:transform 1.1s cubic-bezier(.2,.7,.1,1);will-change:transform;}
+    .show-curtain-left {transform:translateX(-105%);border-right:4px solid #d9a333;}
+    .show-curtain-right {transform:translateX(105%);border-left:4px solid #d9a333;}
+    .stage.curtains-closed .show-curtain-left,.stage.curtains-closed .show-curtain-right {transform:translateX(0);}
+    .stars-holder {position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:7;}
+    .stage-star {position:absolute;color:#fff8b4;font-size:clamp(16px,2.8vw,35px);text-shadow:0 0 12px #ffce55,0 0 23px #ff8e15;animation:starfall var(--duration) ease-out forwards;}
+    @keyframes starfall {from{opacity:0;transform:translateY(-35px) scale(.4) rotate(0deg);}35%{opacity:1;}to{opacity:0;transform:translateY(125px) scale(1.8) rotate(150deg);}}
+
+    @keyframes beam {0%{transform:rotate(-19deg);opacity:.20;}100%{transform:rotate(19deg);opacity:.48;}}
+    @keyframes pulse {to{opacity:.34;}}
+    @keyframes blink {to{opacity:.48;box-shadow:0 0 7px 2px #ffd3493b;}}
+    @keyframes confetti {to{transform:translate3d(var(--drift),112vh,0) rotate(720deg);opacity:.75;}}
+    /* Control principal centrado encima de Efectos y Rockola. */
+    .curtain-console {display:flex;align-items:center;justify-content:center;gap:14px;margin:15px 0 12px;}
+    .curtain-console::before,.curtain-console::after {content:'';height:1px;flex:1;max-width:300px;background:linear-gradient(90deg,transparent,#a97134 75%,#ffcc18);}
+    .curtain-console::after {transform:scaleX(-1);}
+    .curtain-toggle {flex:0 1 auto;min-width:225px;min-height:54px;display:flex;align-items:center;justify-content:center;gap:10px;padding:11px 20px;border:2px solid #ffe27c;border-radius:12px;background:linear-gradient(180deg,#ffde53,#f2b51d);color:#241402;font-size:14px;font-weight:950;letter-spacing:.02em;cursor:pointer;box-shadow:0 4px 18px #ffbc322e;transition:transform .2s,filter .2s;}
+    .curtain-toggle:active {transform:translateY(1px);}
+    .curtain-toggle[aria-expanded="true"] {background:#211823;border-color:#ebba4e;color:#ffda66;}
+    .curtain-state {display:block;text-align:center;color:#c5b4c3;font-size:11px;line-height:1.5;margin:0 0 10px;}
+    @media(max-width:780px){.control-grid{grid-template-columns:1fr 1fr;}.stage{min-height:200px;aspect-ratio:16/10;}.tag{top:12px;left:11px}}
+    @media(max-width:540px){.brand h1{font-size:16px}.brand p{font-size:8px}.live{display:none}.control-grid{grid-template-columns:1fr}.stage{min-height:190px}.shell{padding:5px}.theater-top span{display:none}.curtain-toggle{min-width:190px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand"><img src="assets/logo.webp" class="logo" alt="Memo's Pizza"/><div><h1>MEMO'S FAMILY DINNER</h1><p>EL ESPECTÁCULO DE LA NOCHE</p></div></div>
+      <div class="live"><i></i> ESCENARIO INTERACTIVO</div>
+    </header>
+    <div class="theater">
+      <div class="theater-top"><strong>★ THE NIGHT SHOW · MEMO'S PIZZA ★</strong><span id="show-status">EL TELÓN ESTÁ CERRADO</span></div>
+      <div class="stage curtains-closed" id="stage" aria-live="polite">
+        <video id="stage-video" class="stage-image" src="assets/escenario-memos.mp4" poster="assets/escenario-memos-portada.webp" preload="metadata" muted loop playsinline aria-label="Tres animatrónicos sobre el escenario: conejo con guitarra, oso cantante y gallina con cupcake"></video>
+        <div class="stage-vignette"></div><div class="scanline"></div>
+        <div class="bulb-row" aria-hidden="true"><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span><span class="bulb"></span></div>
+        <div class="beam a"></div><div class="beam b"></div><div class="beam c"></div>
+        <div class="tag"><b>●</b> ESCENARIO DE MEMO’S</div>
+        <div id="confetti"></div><div class="stars-holder" id="stars-holder" aria-hidden="true"></div>
+        <div class="curtain-set" aria-hidden="true"><div class="show-curtain show-curtain-left"></div><div class="show-curtain show-curtain-right"></div></div>
+      </div>
+      <div class="marquee"><em>★</em> SHOW DE ANIMATRÓNICOS <em>★</em> MÚSICA · LUCES · DIVERSIÓN <em>★</em></div>
+    </div>
+    <div class="curtain-console">
+      <button class="curtain-toggle" id="curtain-btn" type="button" aria-controls="stage" aria-expanded="false">
+        <span id="curtain-btn-label">Abrir cortinas</span>
+      </button>
+    </div>
+    <p class="curtain-state" id="curtain-state" aria-live="polite">El telón está cerrado. ¡Abre las cortinas para comenzar el espectáculo!</p>
+    <div class="control-grid">
+      <div class="panel"><h2>Efectos del show</h2>
+        <div class="effects">
+          <button class="effect-btn" id="lights" type="button" aria-pressed="false">Bajar luces</button>
+          <button class="effect-btn" id="color" type="button">Cambiar colores</button>
+          <button class="effect-btn primary" id="confetti-btn" type="button">Confeti</button>
+          <button class="effect-btn" id="stars-btn" type="button">Estrellas</button>
+        </div>
+      </div>
+      <div class="panel"><h2>Rockola de Memo</h2>
+        <div class="jukebox"><label for="song" class="note" style="margin:0">Elige tu canción favorita</label>
+          <select id="song" class="song-select">
+            <option value="noche_neon.mp3">01 · Noche neón</option>
+            <option value="fiesta_del_escenario.mp3">02 · Fiesta del escenario</option>
+            <option value="rockola_nocturna.mp3">03 · Rockola nocturna</option>
+            <option value="fnaf-1.mp3">04 · Five Nights at Freddy’s 1 · The Living Tombstone</option>
+            <option value="fnaf-2.mp3">05 · Five Nights at Freddy’s 2 · The Living Tombstone</option>
+            <option value="fnaf-sister-location.mp3">06 · I Can’t Fix You · Sister Location</option>
+            <option value="fnaf-3.mp3">07 · It’s Time to Die · DAGames</option>
+          </select>
+          <div class="row"><button class="track-btn" id="play" type="button">▶ Reproducir</button><button class="track-btn secondary" id="stop" type="button">■ Detener</button></div>
+        </div><p class="note">¡Disfruta la música y la diversión!</p>
+      </div>
+    </div>
+    <div class="footer"><span><strong>MEMO'S PIZZA</strong> · Un escenario, muchas sonrisas</span><span>(Todo es con fines académicos)</span></div>
+    <audio id="player" preload="none" loop></audio>
+  </div>
+  <script>
+  (() => {
+    'use strict';
+    const stage=document.getElementById('stage');
+    const stageVideo=document.getElementById('stage-video');
+    const player=document.getElementById('player');
+    const play=document.getElementById('play');
+    const stop=document.getElementById('stop');
+    const song=document.getElementById('song');
+    const status=document.getElementById('show-status');
+    const curtainState=document.getElementById('curtain-state');
+    document.getElementById('lights').addEventListener('click',function(){
+      const off=stage.classList.toggle('scene-dark');
+      this.textContent=off?'Encender luces':'Bajar luces'; this.setAttribute('aria-pressed',String(off));
+    });
+    let color=0;
+    document.getElementById('color').addEventListener('click',()=>{
+      stage.classList.remove('scene-blue','scene-red');color=(color+1)%3;
+      if(color===1)stage.classList.add('scene-blue');
+      if(color===2)stage.classList.add('scene-red');
+      status.textContent=['TONO DORADO','TONO AZUL','TONO ROJO'][color];
+    });
+    document.getElementById('confetti-btn').addEventListener('click',()=>{
+      const holder=document.getElementById('confetti');
+      const palette=['#ffce3b','#f94265','#65cfff','#aa7aff','#f8f3e6'];
+      for(let i=0;i<100;i++){
+        const bit=document.createElement('i');bit.className='confetti-bit';
+        bit.style.left=(Math.random()*100)+'%';
+        bit.style.background=palette[i%palette.length];
+        bit.style.setProperty('--duration',(2.5+Math.random()*2.6)+'s');
+        bit.style.setProperty('--drift',((Math.random()-.5)*230)+'px');
+        bit.style.setProperty('--rot',(Math.random()*360)+'deg');
+        bit.style.animationDelay=(Math.random()*.8)+'s';
+        holder.appendChild(bit);setTimeout(()=>bit.remove(),6500);
+      }
+      status.textContent='¡FIESTA EN MEMO\'S!';
+    });
+    document.getElementById('curtain-btn').addEventListener('click',function(){
+      const closed=stage.classList.toggle('curtains-closed');
+      document.getElementById('curtain-btn-label').textContent=closed?'Abrir cortinas':'Cerrar cortinas';
+      curtainState.textContent=closed
+        ?'El telón está cerrado. ¡Abre las cortinas para comenzar el espectáculo!'
+        :'¡El telón está abierto! Disfruta de la música y los efectos del show.';
+      this.setAttribute('aria-expanded',String(!closed));
+      status.textContent=closed?'EL TELÓN ESTÁ CERRADO':'¡EL SHOW HA COMENZADO!';
+      if(closed){
+        stopSong();
+        stageVideo.pause();
+        return;
+      }
+      // Conserva el último cuadro al cerrar y reinicia el video detrás del telón al reabrir.
+      if(stageVideo.currentTime>0)stageVideo.currentTime=0;
+      stageVideo.play().catch(error=>{
+        if(error.name!=='AbortError' && !stage.classList.contains('curtains-closed')){
+          curtainState.textContent='No se pudo reproducir la animación del escenario.';
+        }
+      });
+      playSong();
+    });
+    document.getElementById('stars-btn').addEventListener('click',()=>{
+      const holder=document.getElementById('stars-holder');
+      for(let i=0;i<28;i++){
+        const star=document.createElement('span');star.className='stage-star';star.textContent='★';
+        star.style.left=(Math.random()*95)+'%';
+        star.style.top=(5+Math.random()*55)+'%';
+        star.style.setProperty('--duration',(1.1+Math.random()*1.4)+'s');
+        star.style.animationDelay=(Math.random()*.65)+'s';
+        holder.appendChild(star);setTimeout(()=>star.remove(),4000);
+      }
+      status.textContent='LLUVIA DE ESTRELLAS';
+    });
+    function setSong(){player.src='assets/'+encodeURIComponent(song.value);}
+    function playSong(){
+      if(!player.src)setSong();
+      if(!player.paused)return;
+      try {
+        const globalMusic=window.parent?.document?.getElementById('global-music');
+        if(globalMusic){globalMusic.pause();globalMusic.setAttribute('data-user-muted','true');}
+      } catch { /* El show independiente también funciona sin una página principal. */ }
+      player.play().catch(error=>{
+        if(error.name!=='AbortError')status.textContent='No se pudo iniciar el audio. Pulsa Reproducir para intentarlo de nuevo.';
+      });
+    }
+    function stopSong(){
+      player.pause();
+      player.currentTime=0;
+      play.textContent='▶ Reproducir';
+    }
+    player.addEventListener('playing',()=>{
+      if(player.paused)return;
+      play.textContent='❚❚ Pausar';
+      status.textContent='ROCKOLA · '+song.options[song.selectedIndex].text;
+    });
+    player.addEventListener('pause',()=>{
+      if(player.paused)play.textContent='▶ Reproducir';
+    });
+    song.addEventListener('change',()=>{
+      const wasPlaying=!player.paused;
+      setSong();
+      if(wasPlaying)playSong();
+    });
+    play.addEventListener('click',()=>{
+      if(player.paused)playSong();
+      else player.pause();
+    });
+    stop.addEventListener('click',()=>{
+      stopSong();
+      status.textContent='ROCKOLA DETENIDA';
+    });
+    window.addEventListener('pagehide',()=>{
+      player.pause();
+      stageVideo.pause();
+    });
+  })();
+  </script>
+</body>
+</html>

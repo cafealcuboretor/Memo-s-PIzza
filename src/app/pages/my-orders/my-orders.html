@@ -1,0 +1,253 @@
+<section class="bg-dark text-light min-vh-100 py-5">
+  <div class="container" style="max-width: 1180px;">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+      <div>
+        <p class="text-warning fw-bold text-uppercase small mb-1">Centro de seguimiento</p>
+        <h1 class="fw-bold text-warning mb-1">Mis pedidos</h1>
+        <p class="text-secondary mb-0">Revisa pedidos pendientes, entregados y cancelados. Consulta sus comprobantes cuando los necesites.</p>
+      </div>
+      <div class="d-flex flex-wrap gap-2">
+        <a routerLink="/tracker" class="btn btn-outline-info fw-bold">Ver tracker</a>
+        <a routerLink="/menu" class="btn btn-warning fw-bold text-dark">Seguir comprando</a>
+      </div>
+    </div>
+
+    <p class="small text-warning mb-4">Plazo de cancelación de este prototipo: 60 segundos desde que confirmas el pedido. (Todo es con fines académicos).</p>
+    <div class="row g-4 mb-4 stats-row">
+      <div class="col-md-4">
+        <div class="stat-card border-warning">
+          <div class="stat-value text-warning">{{ currentOrders.length }}</div>
+          <div class="stat-label">En proceso / camino</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card border-success">
+          <div class="stat-value text-success">{{ completedOrders.length }}</div>
+          <div class="stat-label">Entregados</div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card border-danger">
+          <div class="stat-value text-danger">{{ cancelledOrders.length }}</div>
+          <div class="stat-label">Cancelados</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card bg-black border border-warning shadow mb-4">
+      <div class="card-header bg-transparent border-bottom border-secondary">
+        <h2 class="h4 text-warning mb-0">Pedidos actuales</h2>
+      </div>
+      <div class="card-body p-4">
+        @if (currentOrders.length) {
+          <div class="order-list">
+            @for (order of currentOrders; track order.id) {
+              <article class="order-card">
+                <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+                  <div>
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                      <span class="badge bg-warning text-dark fw-bold">{{ order.folio }}</span>
+                      <span class="badge status-pill status-{{ ordersService.getEffectiveStatus(order) }}">{{ statusLabel(order) }}</span>
+                    </div>
+                    <h3 class="h5 mb-1 text-light">{{ order.items[0].name }} <span class="text-secondary">y {{ order.items.length - 1 }} artículo(s) más</span></h3>
+                    <p class="text-secondary small mb-2">{{ statusDescription(order) }}</p>
+                    <div class="small order-meta">
+                      <span>📍 {{ order.delivery.address }}</span>
+                      <span>💵 Total ${{ order.total | number:'1.2-2' }}</span>
+                      <span>🧾 {{ order.payment.receiptNumber }}</span>
+                      <span class="text-warning">⏱ Plazo para cancelar: {{ remainingTime(order) }}</span>
+                    </div>
+                  </div>
+                  <div class="d-flex flex-wrap gap-2 align-self-start">
+                    <button class="btn btn-outline-warning btn-sm fw-bold" type="button" (click)="openReceipt(order)">Ver comprobante</button>
+                    @if (canCancel(order)) {
+                      <button class="btn btn-outline-danger btn-sm fw-bold" type="button" (click)="openCancelModal(order)">Cancelar pedido</button>
+                    } @else {
+                      <span class="small text-secondary align-self-center">Plazo de cancelación finalizado</span>
+                    }
+                  </div>
+                </div>
+              </article>
+            }
+          </div>
+        } @else {
+          <div class="empty-state">
+            <h3 class="h5 text-warning">Aún no tienes pedidos en proceso</h3>
+            <p class="text-secondary mb-3">Cuando completes un pago, aquí aparecerá el estado de tu orden y la opción de seguimiento.</p>
+            <a routerLink="/menu" class="btn btn-warning fw-bold text-dark">Ir al menú</a>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-6">
+        <div class="card bg-black border border-success shadow h-100">
+          <div class="card-header bg-transparent border-bottom border-secondary">
+            <h2 class="h4 text-success mb-0">Historial entregado</h2>
+          </div>
+          <div class="card-body p-4">
+            @if (completedOrders.length) {
+              @for (order of completedOrders; track order.id) {
+                <div class="history-item">
+                  <div>
+                    <div class="fw-bold text-light">{{ order.folio }}</div>
+                    <div class="text-secondary small">{{ order.payment.paidAt }} · ${{ order.total | number:'1.2-2' }}</div>
+                  </div>
+                  <button class="btn btn-outline-success btn-sm" type="button" (click)="openReceipt(order)">Factura / recibo</button>
+                </div>
+              }
+            } @else {
+              <p class="text-secondary mb-0">Todavía no hay pedidos entregados registrados en este navegador.</p>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card bg-black border border-danger shadow h-100">
+          <div class="card-header bg-transparent border-bottom border-secondary">
+            <h2 class="h4 text-danger mb-0">Pedidos cancelados</h2>
+          </div>
+          <div class="card-body p-4">
+            @if (cancelledOrders.length) {
+              @for (order of cancelledOrders; track order.id) {
+                <div class="history-item">
+                  <div>
+                    <div class="fw-bold text-light">{{ order.folio }}</div>
+                    <div class="text-secondary small">Cancelado · {{ order.cancelledAt | date:'dd/MM/yyyy, HH:mm' }}</div>
+                    <div class="small text-light mt-1">Motivo: {{ order.cancellationReason || 'No especificado' }}</div>
+                    <div class="small" [class.text-success]="order.payment.method === 'tarjeta'" [class.text-warning]="order.payment.method === 'efectivo'">{{ refundLabel(order) }}</div>
+                  </div>
+                  <button class="btn btn-outline-danger btn-sm" type="button" (click)="openReceipt(order)">Ver detalle</button>
+                </div>
+              }
+            } @else {
+              <p class="text-secondary mb-0">No hay pedidos cancelados por ahora.</p>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+@if (showReceiptModal && selectedOrder) {
+  <div class="receipt-backdrop" (click)="closeReceipt()">
+    <div class="receipt-modal" (click)="$event.stopPropagation()">
+      <div class="d-flex justify-content-between align-items-center border-bottom border-secondary pb-3 mb-3">
+        <div>
+          <div class="small text-warning fw-bold">COMPROBANTE DE PAGO</div>
+          <h3 class="h4 mb-0 text-light">{{ selectedOrder.folio }}</h3>
+        </div>
+        <button type="button" class="btn-close btn-close-white" aria-label="Cerrar" (click)="closeReceipt()"></button>
+      </div>
+
+      <p class="receipt-demo-notice">(Todo es con fines académicos). Este comprobante no equivale a un CFDI ni acredita una transacción bancaria.</p>
+      @if (selectedOrder.status === 'cancelado') {
+        <div class="refund-status-card my-3">
+          <strong class="text-warning d-block mb-1">Pedido cancelado</strong>
+          <p class="mb-1 text-light">Motivo: {{ selectedOrder.cancellationReason || 'No especificado' }}</p>
+          @if (selectedOrder.cancellationComment) { <p class="small text-secondary mb-1">{{ selectedOrder.cancellationComment }}</p> }
+          <strong class="text-light">{{ refundLabel(selectedOrder) }}</strong>
+          @if (selectedOrder.payment.method === 'tarjeta') {
+            <p class="small text-light-emphasis mt-2 mb-1">En operaciones bancarias reales, el reflejo puede tardar de 5 a 10 días hábiles y depender del banco.</p>
+            <p class="small text-warning mb-0">(Todo es con fines académicos: aquí se registra el reembolso, no se transfiere dinero a ninguna cuenta.)</p>
+          } @else {
+            <p class="small text-secondary mb-0">La modalidad de efectivo no genera devolución a tarjeta.</p>
+          }
+        </div>
+      }
+      <div class="receipt-grid">
+        <div class="receipt-block">
+          <span class="label">Cliente</span>
+          <strong>{{ selectedOrder.customer.name }}</strong>
+          <small>{{ selectedOrder.customer.email }}</small>
+        </div>
+        <div class="receipt-block">
+          <span class="label">Pago</span>
+          <strong>{{ getPaymentMethodLabel(selectedOrder) }}</strong>
+          <small>{{ selectedOrder.payment.method === 'tarjeta' ? 'Terminación ' + (selectedOrder.payment.cardLast4 || '----') : 'Cobro registrado' }}</small>
+        </div>
+        <div class="receipt-block">
+          <span class="label">Comprobante</span>
+          <strong>{{ selectedOrder.payment.receiptNumber }}</strong>
+          <small>Referencia de factura: {{ selectedOrder.payment.invoiceNumber }}</small>
+        </div>
+        <div class="receipt-block">
+          <span class="label">Estado</span>
+          <strong>{{ statusLabel(selectedOrder) }}</strong>
+          <small>{{ selectedOrder.payment.paidAt }}</small>
+        </div>
+      </div>
+
+      <div class="receipt-products mt-3">
+        @for (item of selectedOrder.items; track item.id) {
+          <div class="receipt-product-row">
+            <div>
+              <strong>{{ item.name }}</strong>
+              <div class="small text-secondary">{{ item.quantity }} × ${{ item.price | number:'1.2-2' }}</div>
+            </div>
+            <div class="text-end fw-bold text-light">${{ (item.quantity * item.price) | number:'1.2-2' }}</div>
+          </div>
+        }
+      </div>
+
+      <div class="delivery-box mt-3">
+        <h4 class="h6 text-warning mb-2">Destino del pedido</h4>
+        <p class="mb-1"><strong>{{ selectedOrder.delivery.customerName }}</strong> · {{ selectedOrder.delivery.phone }}</p>
+        <p class="mb-1">{{ selectedOrder.delivery.address }}</p>
+        @if (selectedOrder.delivery.neighborhood) {
+          <p class="mb-1 text-secondary">Colonia: {{ selectedOrder.delivery.neighborhood }}</p>
+        }
+        @if (selectedOrder.delivery.specialInstructions) {
+          <p class="mb-0 text-secondary">Indicaciones: {{ selectedOrder.delivery.specialInstructions }}</p>
+        }
+      </div>
+
+      <div class="receipt-total-box mt-3">
+        <div class="d-flex justify-content-between"><span>Subtotal</span><span>${{ selectedOrder.subtotal | number:'1.2-2' }}</span></div>
+        <div class="d-flex justify-content-between"><span>Envío</span><span>${{ selectedOrder.shippingCost | number:'1.2-2' }}</span></div>
+        <div class="d-flex justify-content-between total-line"><span>Total del pedido</span><span>${{ selectedOrder.total | number:'1.2-2' }}</span></div>
+      </div>
+    </div>
+  </div>
+}
+
+@if (showCancelModal && orderToCancel) {
+  <div class="receipt-backdrop" role="presentation" (click)="closeCancelModal()">
+    <section class="receipt-modal cancel-modal" role="dialog" aria-modal="true" aria-labelledby="cancel-order-title" (click)="$event.stopPropagation()">
+      <div class="d-flex align-items-center justify-content-between gap-3 border-bottom border-secondary pb-3 mb-3">
+        <div>
+          <p class="text-warning small fw-bold text-uppercase mb-1">Atención a pedidos</p>
+          <h2 id="cancel-order-title" class="h4 text-light fw-bold mb-0">¿Deseas cancelar tu pedido?</h2>
+        </div>
+        <button type="button" class="btn-close btn-close-white" aria-label="Cerrar" (click)="closeCancelModal()"></button>
+      </div>
+      <p class="text-light">Pedido <strong class="text-warning">{{ orderToCancel.folio }}</strong>. Cuéntanos por qué deseas cancelarlo.</p>
+      <p class="cancel-countdown text-warning fw-bold">⏱ Tiempo disponible: {{ remainingTime(orderToCancel) }}</p>
+      <label for="reason-cancel" class="form-label text-light fw-semibold">Motivo de cancelación *</label>
+      <select id="reason-cancel" class="form-select cancel-input" [(ngModel)]="cancellationReason">
+        <option value="">Selecciona un motivo</option>
+        @for (reason of cancellationReasons; track reason) { <option [value]="reason">{{ reason }}</option> }
+      </select>
+      <label for="comment-cancel" class="form-label text-light fw-semibold mt-3">Comentarios adicionales (opcional)</label>
+      <textarea id="comment-cancel" rows="3" maxlength="280" class="form-control cancel-input" [(ngModel)]="cancellationComment" placeholder="Escribe un comentario breve"></textarea>
+      @if (cancellationError) { <p class="text-danger mt-2 fw-semibold">{{ cancellationError }}</p> }
+      <div class="refund-explainer mt-3">
+        @if (orderToCancel.payment.method === 'tarjeta') {
+          <strong class="text-warning">💳 Reembolso a tarjeta</strong>
+          <p class="text-light small mb-1 mt-2">Al confirmar, registraremos el reembolso de ${{ orderToCancel.total | number:'1.2-2' }} en tu historial. En bancos reales, su acreditación depende de la institución y puede requerir varios días hábiles.</p>
+          <p class="small text-secondary mb-0">(Todo es con fines académicos: no se realizan cargos ni reembolsos bancarios reales.)</p>
+        } @else {
+          <strong class="text-warning">💵 Pedido en efectivo</strong>
+          <p class="text-light small mb-0 mt-2">Se cancelará el pedido y no se registrará reembolso bancario.</p>
+        }
+      </div>
+      <div class="d-flex flex-wrap gap-2 mt-4">
+        <button type="button" class="btn btn-outline-light flex-fill" (click)="closeCancelModal()">Conservar pedido</button>
+        <button type="button" class="btn btn-danger fw-bold flex-fill" [disabled]="!cancellationReason || !canCancel(orderToCancel)" (click)="confirmCancellation()">Confirmar cancelación</button>
+      </div>
+    </section>
+  </div>
+}

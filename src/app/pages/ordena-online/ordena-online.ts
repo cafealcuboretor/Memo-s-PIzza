@@ -62,7 +62,7 @@ export class OrdenaOnline implements OnInit {
       return;
     }
 
-    // 1. Guarda los datos en el servicio (y en localStorage)
+    // 1. Guarda los datos del pedido en esta sesión. Solo persiste entre visitas con autorización expresa.
     this.cartService.setDeliveryData(this.orderForm);
 
     // 2. Notificación Fazbear y redirección al carrito

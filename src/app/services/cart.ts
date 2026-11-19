@@ -1,6 +1,7 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject } from 'rxjs';
+import { PrivacyPreferencesService } from './privacy-preferences';
 
 export interface CartItem {
   id: string;
@@ -8,6 +9,8 @@ export interface CartItem {
   price: number;
   quantity: number;
   emoji: string;
+  image?: string;
+  category?: 'pizzas' | 'bebidas' | 'postres' | 'promociones' | 'combos';
 }
 
 export interface DeliveryData {
@@ -27,34 +30,38 @@ export class CartService {
   private cartSubject = new BehaviorSubject<CartItem[]>([]);
   cart$ = this.cartSubject.asObservable();
 
-  // Observable exclusivo para los datos de entrega
   private deliveryData: DeliveryData | null = null;
   private deliverySubject = new BehaviorSubject<DeliveryData | null>(null);
   delivery$ = this.deliverySubject.asObservable();
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, private privacy: PrivacyPreferencesService) {
     if (isPlatformBrowser(this.platformId)) {
-      // 1. Cargar carrito previo
       const savedCart = localStorage.getItem('memos_cart');
       if (savedCart) {
         try {
-          this.cartItems = JSON.parse(savedCart);
+          const parsed = JSON.parse(savedCart);
+          this.cartItems = Array.isArray(parsed) ? parsed : [];
           this.cartSubject.next(this.cartItems);
-        } catch (e) {
+        } catch {
           this.cartItems = [];
         }
       }
 
-      // 2. Cargar datos de entrega previos si existen
-      const savedDelivery = localStorage.getItem('memos_delivery');
+      if (!this.privacy.current?.rememberDelivery) localStorage.removeItem('memos_delivery');
+      const savedDelivery = sessionStorage.getItem('memos_delivery') ||
+        (this.privacy.current?.rememberDelivery ? localStorage.getItem('memos_delivery') : null);
       if (savedDelivery) {
         try {
           this.deliveryData = JSON.parse(savedDelivery);
           this.deliverySubject.next(this.deliveryData);
-        } catch (e) {
+        } catch {
           this.deliveryData = null;
         }
       }
+      this.privacy.choices$.subscribe(choices => {
+        if (!choices?.rememberDelivery) localStorage.removeItem('memos_delivery');
+        else if (this.deliveryData) localStorage.setItem('memos_delivery', JSON.stringify(this.deliveryData));
+      });
     }
   }
 
@@ -62,17 +69,17 @@ export class CartService {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('memos_cart', JSON.stringify(this.cartItems));
     }
-    this.cartSubject.next([...this.cartItems]); 
+    this.cartSubject.next([...this.cartItems]);
   }
 
-  // --- MÉTODOS DE ENTREGA ---
   setDeliveryData(data: DeliveryData) {
     this.deliveryData = {
       ...data,
       registeredAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem('memos_delivery', JSON.stringify(this.deliveryData));
+      sessionStorage.setItem('memos_delivery', JSON.stringify(this.deliveryData));
+      if (this.privacy.current?.rememberDelivery) localStorage.setItem('memos_delivery', JSON.stringify(this.deliveryData));
     }
     this.deliverySubject.next(this.deliveryData);
   }
@@ -84,16 +91,18 @@ export class CartService {
   clearDeliveryData() {
     this.deliveryData = null;
     if (isPlatformBrowser(this.platformId)) {
+      sessionStorage.removeItem('memos_delivery');
       localStorage.removeItem('memos_delivery');
     }
     this.deliverySubject.next(null);
   }
 
-  // --- MÉTODOS DE CARRITO EXISTENTES ---
   addItem(item: Omit<CartItem, 'quantity'>) {
     const existing = this.cartItems.find(i => i.id === item.id);
     if (existing) {
       existing.quantity += 1;
+      existing.image = existing.image || item.image;
+      existing.category = existing.category || item.category;
     } else {
       this.cartItems.push({ ...item, quantity: 1 });
     }
@@ -118,7 +127,7 @@ export class CartService {
   }
 
   getItems(): CartItem[] {
-    return this.cartItems;
+    return [...this.cartItems];
   }
 
   getTotalCount(): number {

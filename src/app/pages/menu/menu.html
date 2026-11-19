@@ -4,7 +4,7 @@
     <!-- Encabezado -->
     <div class="text-center mb-4">
       <h1 class="display-4 fw-bold text-warning neon-text">MENÚ COMPLETO</h1>
-      <p class="text-secondary lead">Horneado artesanal listo para acompañar tu guardia</p>
+      <p class="text-secondary lead">Pizzas, bebidas y postres de tu pizzería retro favorita</p>
     </div>
 
     <!-- Buscador de comida -->
@@ -62,7 +62,7 @@
                   [alt]="item.name" 
                   class="product-img"
                   (error)="item.image = ''"
-                  loading="lazy"
+                  loading="lazy" decoding="async"
                 />
               } @else {
                 <div class="d-flex justify-content-center align-items-center h-100">

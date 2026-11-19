@@ -2,7 +2,7 @@
   <div class="container" style="max-width: 960px; line-height: 1.75;">
     <a routerLink="/" class="text-warning text-decoration-none">← Regresar a Memo's Pizza</a>
     <h1 class="text-warning fw-bold mt-4 mb-2">Información legal y políticas comerciales</h1>
-    <p class="text-secondary small mb-4">Memo's Pizza · Actualización: 29 de octubre de 2026</p>
+    <p class="text-secondary small mb-4">Memo's Pizza · Actualización: 17 de noviembre de 2026</p>
 
     @if (section === 'aviso') {
       <h2 class="h4 text-warning">Aviso legal e identificación del proveedor</h2>
@@ -13,12 +13,14 @@
       <strong>Teléfono:</strong> 55-202-1983.<br>
       <strong>Horario anunciado:</strong> de 10:00 a 22:00 horas, sujeto a cambios comunicados por el establecimiento.</p>
       <p>En Memo's Pizza buscamos ofrecer información clara sobre nuestros productos y condiciones de compra. Los pedidos deberán ser realizados por personas mayores de edad o bajo autorización y supervisión de sus representantes legales.</p>
-      <p>Las condiciones completas de contratación se muestran al crear una cuenta. Los clientes registrados pueden consultarlas desde <strong>Mi cuenta → Ajustes → Términos y Condiciones</strong>.</p>
+      <p>Las condiciones completas de contratación se muestran al crear una cuenta y de nuevo al confirmar la compra. Los clientes registrados pueden consultarlas desde <strong>Mi cuenta → Ajustes → Términos y Condiciones</strong>. Los datos comerciales de la empresa son simulados para este proyecto académico.</p>
     }
 
     @if (section === 'devoluciones') {
       <h2 class="h4 text-warning">Política de cancelaciones, devoluciones y garantías</h2>
       <p>Nuestro compromiso es entregar los productos solicitados en las condiciones de calidad ofrecidas. Si recibes un pedido incorrecto, incompleto o en mal estado, repórtalo tan pronto como sea posible, indicando el nombre del titular, la referencia de la orden, la fecha y una descripción del problema.</p>
+      <p>Como política comercial prevista para una futura operación real, se contempla un plazo inicial de <strong>5 minutos</strong> desde la confirmación para solicitar cancelación en línea, sujeto a las disposiciones de protección al consumidor. <strong>Esta política de 5 minutos no está activa en el prototipo</strong>: para facilitar su demostración académica, el sistema actual permite cancelar durante <strong>60 segundos</strong>, con un contador visible en «Mis pedidos».</p>
+      <p>El cliente debe elegir un motivo al solicitar la cancelación. Para pagos con tarjeta de prueba, el sistema registra el estado del reembolso sin mover fondos reales; en pedidos en efectivo no hay reembolso bancario. Cuando exista una pasarela de pagos, la acreditación de reembolsos dependerá del banco y de las condiciones vigentes.</p>
       <p>Las cancelaciones solicitadas antes de iniciar la preparación serán revisadas según el estado de la orden. Debido a la naturaleza perecedera de los alimentos preparados, las solicitudes posteriores se evaluarán considerando el producto, la incidencia y las disposiciones legales aplicables.</p>
       <p>En las operaciones sujetas a las disposiciones de contratación a distancia, se respetarán los derechos de revocación y los plazos legales que correspondan. En ningún caso se condicionan o eliminan los derechos irrenunciables de las personas consumidoras. Cuando proceda, podrá acordarse reposición, corrección del pedido o devolución de los importes pertinentes.</p>
     }
@@ -38,19 +40,51 @@
     }
 
     @if (section === 'privacidad') {
-      <h2 class="h4 text-warning">Aviso de privacidad integral</h2>
-      <p><strong>Responsable:</strong> Memo's Pizza Entretenimiento y Alimentos, S.A. de C.V., con domicilio de contacto en Av. Principal núm. 1987, Nuevo Laredo, Tamaulipas, México.</p>
-      <p><strong>Datos tratados:</strong> nombre, correo electrónico y contraseña para registro y acceso; nombre del destinatario, teléfono, domicilio, colonia e instrucciones especiales para organizar la entrega. Los datos se utilizan para la administración de la cuenta, la preparación de pedidos, la comunicación con el cliente y la atención de solicitudes.</p>
-      <p>Esta versión de la tienda conserva registros de cuenta y determinadas preferencias en el almacenamiento local del navegador. Por ello, no deben introducirse datos bancarios, información sensible ni contraseñas que se utilicen en otros servicios. El procesamiento de tarjetas en línea no está habilitado.</p>
-      <p><strong>Derechos ARCO:</strong> para solicitar acceso, rectificación, cancelación u oposición sobre datos personales, así como plantear dudas sobre su tratamiento, utiliza el correo <a href="mailto:memospizza@delicias.com" class="text-warning">memospizza@delicias.com</a> e indica el derecho que deseas ejercer, tu nombre y la información necesaria para identificar la solicitud. El trámite deberá atenderse en los términos de la legislación de protección de datos personales aplicable.</p>
-      <p><strong>Cookies y preferencias:</strong> las opciones esenciales de navegación permiten utilizar las funciones básicas del sitio. Las preferencias de cookies no esenciales se ofrecen de forma separada y pueden aceptarse o rechazarse. Las vistas CCTV del seguimiento son representaciones digitales y no implican videovigilancia en vivo de personas usuarias.</p>
+      <h2 class="h4 text-warning">Aviso de Privacidad Integral</h2>
+      <p><strong>Responsable del proyecto:</strong> Memo's Pizza Entretenimiento y Alimentos, S.A. de C.V. (razón social simulada para fines académicos), con domicilio de contacto simulado en Av. Principal núm. 1987, Nuevo Laredo, Tamaulipas, México. Contacto: <a href="mailto:memospizza@delicias.com" class="text-warning">memospizza@delicias.com</a>, teléfono 55-202-1983.</p>
+      <p><strong>Datos y finalidades necesarias:</strong> nombre, correo electrónico y contraseña de demostración para crear e ingresar a una cuenta temporal; datos de carrito; y, cuando se solicita un pedido, nombre, teléfono, calle, número, colonia e instrucciones que proporcione la persona para preparar la entrega y mostrar el seguimiento simulado.</p>
+      <p><strong>Ubicación del navegador (opcional y separada):</strong> la página ofrece solicitar permiso para conocer las coordenadas aproximadas o precisas, según la respuesta del dispositivo, mediante la función de geolocalización del navegador. Solo se solicita tras hacer clic en «Compartir ubicación», no es obligatoria para navegar ni registrarse y no se guardan las coordenadas en localStorage, sessionStorage o pedidos ni se envían al servidor de la aplicación. El navegador o el proveedor de geolocalización podrían procesar datos según sus políticas. La página todavía no convierte las coordenadas automáticamente en una calle y número; la dirección de entrega se introduce manualmente.</p>
+      <p><strong>Almacenamiento y preferencias:</strong> esta versión guarda en el navegador los datos necesarios para el carrito y la sesión de prueba, además del historial local de pedidos y sus comprobantes simulados (que pueden incluir nombre, correo, teléfono y domicilio de entrega). Por elección del visitante también podemos recordar el volumen y los datos de entrega. Las categorías opcionales de personalización se controlan desde «Preferencias de cookies» del footer. No utilizamos herramientas propias de analítica ni publicidad. Consulta la <a routerLink="/legal/cookies" class="text-warning">Política de Cookies y Almacenamiento</a> para conocer las opciones disponibles.</p>
+      <p><strong>Tarjetas de demostración:</strong> la terminal admite únicamente números ficticios de prueba. Si marcas expresamente «Guardar esta tarjeta ficticia», conservaremos en este navegador un alias, el nombre del titular de prueba, vencimiento, marca ilustrativa y últimos cuatro dígitos, asociados a tu correo de sesión. <strong>No almacenamos el número completo ni el CVV</strong> y no enviamos datos a un banco. Puedes eliminar una tarjeta o todas desde «Mi cuenta → Ajustes». No introduzcas tarjetas reales.</p>
+      <p><strong>Cancelaciones y devoluciones:</strong> al cancelar un pedido se conservan localmente la fecha, el motivo seleccionado, los comentarios opcionales y el estado ilustrativo del reembolso. Si el pago fue con tarjeta de prueba, solo se registra la devolución en el historial: no se envía dinero ni se contacta con una entidad bancaria. Esta versión académica limita la cancelación a 60 segundos para la presentación del proyecto; el plazo comercial previsto de cinco minutos no está habilitado.</p>
+      <p><strong>Conservación:</strong> las cuentas temporales se conservan durante la sesión de la pestaña. El carrito, el historial de órdenes y los comprobantes de demostración pueden permanecer en este navegador hasta que se borren los datos del sitio. Las preferencias voluntarias se conservan según la elección realizada. Las tarjetas ficticias recordadas pueden eliminarse individualmente o en conjunto desde Ajustes; borrar el almacenamiento del navegador también elimina los perfiles guardados.</p>
+      <p><strong>Seguridad:</strong> no proporciones contraseñas utilizadas en otros servicios ni datos bancarios reales. Los mecanismos actuales de cuenta y pago son demostrativos; la validación del CVV verifica únicamente el formato de un código ficticio, no autoriza operaciones con ninguna entidad bancaria. El proyecto todavía no cuenta con un procesador de pagos real ni una autenticación de producción.</p>
+      <p><strong>Derechos ARCO, revocación y solicitudes:</strong> para solicitar acceso, rectificación, cancelación u oposición, revocar un consentimiento opcional o plantear preguntas sobre el tratamiento, escribe a <a href="mailto:memospizza@delicias.com" class="text-warning">memospizza@delicias.com</a>, indicando tu solicitud y datos mínimos que permitan localizarla. También puedes retirar las preferencias opcionales directamente desde el footer. La atención a estas solicitudes deberá ajustarse a la legislación aplicable.</p>
+      <p><strong>Cambios al aviso:</strong> cualquier cambio importante en finalidades o tecnología debe reflejarse aquí y comunicarse de forma visible antes de activar una nueva finalidad opcional. Última actualización del proyecto: 17 de noviembre de 2026.</p>
+    }
+
+    @if (section === 'cookies') {
+      <h2 class="h4 text-warning">Política de Cookies y Almacenamiento Local</h2>
+      <p>En Memo's Pizza queremos que sepas qué información se conserva en tu navegador y para qué la usamos. Esta versión de nuestra tienda no utiliza cookies propias para mostrar anuncios personalizados ni para seguir tus visitas con herramientas de analítica. En cambio, algunas funciones usan el almacenamiento de tu navegador para que puedas comprar y elegir tus preferencias.</p>
+
+      <h3 class="h5 text-warning mt-4">Lo necesario para que la tienda funcione</h3>
+      <p>Guardamos temporalmente la información que permite conservar los productos de tu carrito, mantener tu sesión de demostración mientras navegas y utilizar los datos de entrega del pedido actual. También recordamos las opciones de privacidad que seleccionaste para no preguntártelas cada vez que visitas una página.</p>
+      <p>Estas funciones son necesarias para usar el carrito, el registro y el proceso de pedido. No se usan con fines publicitarios.</p>
+
+      <h3 class="h5 text-warning mt-4">Opciones que tú puedes elegir</h3>
+      <p><strong>Recordar el volumen:</strong> si activas esta opción, la tienda recordará el nivel de audio que prefieres cuando vuelvas a entrar. Si la dejas desactivada, podrás seguir usando el audio sin guardar esa preferencia entre visitas.</p>
+      <p><strong>Recordar tus datos de entrega:</strong> si lo autorizas, podremos conservar en este dispositivo el nombre, teléfono y dirección que ingreses para facilitar tus próximos pedidos. Si no lo autorizas, esos datos se usarán solamente para el pedido de la sesión actual y no se recordarán para futuras visitas.</p>
+      <p>Ambas opciones son voluntarias y están desactivadas hasta que las selecciones. Puedes cambiar tu decisión en cualquier momento.</p>
+      <p><strong>Recordar una tarjeta ficticia:</strong> al usar la terminal de pago puedes marcar, por separado, si deseas guardar un perfil de tarjeta de prueba para volver a utilizarlo. Solo se conservan datos descriptivos, como alias, titular de prueba, vencimiento y los últimos cuatro dígitos; nunca guardamos el número completo ni el código CVV. Esta opción no se activa con «Aceptar todas» y puedes borrar los perfiles cuando quieras desde «Mi cuenta → Ajustes».</p>
+
+      <h3 class="h5 text-warning mt-4">Tu ubicación es una decisión aparte</h3>
+      <p>El permiso para compartir tu ubicación no forma parte de las preferencias de cookies. Solo se solicita si decides usar esa función y tu navegador te permite aceptarlo o rechazarlo. Rechazarlo no impide consultar el menú, iniciar sesión ni realizar un pedido.</p>
+      <p>En esta versión, la tienda no conserva tus coordenadas ni obtiene automáticamente tu calle o número. Para una entrega, tú escribes la dirección que deseas utilizar.</p>
+
+      <h3 class="h5 text-warning mt-4">¿Cuánto tiempo permanece la información?</h3>
+      <p>Algunos datos se conservan únicamente durante la sesión de navegación, como la cuenta temporal y la dirección del pedido actual. Otros, como el carrito, el historial de pedidos y sus comprobantes simulados, pueden permanecer en el navegador hasta que los elimines. El volumen y los datos de entrega solo se recuerdan entre visitas si autorizaste la opción correspondiente. Los perfiles de tarjeta de prueba guardados de forma voluntaria pueden eliminarse desde Ajustes.</p>
+      <p>Puedes borrar la información guardada desde la configuración de privacidad de tu navegador. Ten en cuenta que, si lo haces, podrías perder tu carrito o tener que iniciar sesión de nuevo.</p>
+
+      <h3 class="h5 text-warning mt-4">Tú tienes el control</h3>
+      <p>Puedes elegir «Solo necesarias», «Aceptar todas» o seleccionar individualmente las opciones voluntarias. Si después cambias de opinión, abre <button type="button" class="btn btn-link text-warning p-0 align-baseline" (click)="openCookiePreferences()">Preferencias de cookies</button> para activar o desactivar cada una.</p>
+      <p>Para saber cómo tratamos tus datos personales, consulta nuestro <a routerLink="/legal/privacidad" class="text-warning">Aviso de Privacidad</a>. Si tienes preguntas sobre el uso de tu información, puedes contactarnos mediante los canales de atención indicados en esta página.</p>
     }
 
     @if (section === 'seguridad') {
       <h2 class="h4 text-warning">Propiedad intelectual, consentimiento y seguridad</h2>
       <p>Los textos originales, la programación propia y el diseño de Memo's Pizza están sujetos a la protección que corresponda conforme a las leyes aplicables. Las obras, marcas, música, imágenes y personajes de terceros pertenecen a sus respectivos titulares y cualquier uso comercial requiere los derechos o autorizaciones pertinentes. Memo's Pizza no afirma representar ni estar afiliada a franquicias ajenas.</p>
-      <p>La aceptación de los Términos y Condiciones se solicita durante la creación de la cuenta. En el proceso de confirmación de pedido también se pide una manifestación expresa sobre las condiciones comerciales y el Aviso de Privacidad.</p>
-      <p>La seguridad de los pagos y los datos exige medidas proporcionales al servicio prestado. En la versión actual, el pago con tarjeta no procesa cargos ni solicita números bancarios. La autenticación y el resguardo de información personal deberán migrarse a una infraestructura segura antes de la operación comercial con clientes reales.</p>
+      <p>La aceptación de los Términos y Condiciones se solicita durante la creación de la cuenta. La geolocalización es opcional, se pide por separado y su rechazo no impide navegar. En el proceso de confirmación de pedido también se pide una manifestación expresa sobre las condiciones comerciales y el Aviso de Privacidad.</p>
+      <p>La seguridad de los pagos y los datos exige medidas proporcionales al servicio prestado. En la versión actual, la terminal solo acepta números de tarjeta ficticios predeterminados, no procesa cargos y jamás debería utilizarse con datos bancarios reales. Las tarjetas recordadas guardan únicamente metadatos ilustrativos, nunca el número completo ni el CVV. La autenticación y el resguardo de información personal deberán migrarse a una infraestructura segura antes de la operación comercial con clientes reales.</p>
     }
 
     <hr class="border-secondary mt-5">
