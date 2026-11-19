@@ -1,0 +1,17 @@
+{
+  "hosting": {
+    "target": "memos-family-dinner",
+    "public": "dist/tienda-virtual/browser",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
