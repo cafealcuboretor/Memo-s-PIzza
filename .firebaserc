@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "timbresabormango"
+  },
+  "targets": {
+    "timbresabormango": {
+      "hosting": {
+        "memos-family-dinner": [
+          "memos-family-dinner"
+        ]
+      }
+    }
+  }
+}
