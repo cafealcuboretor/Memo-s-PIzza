@@ -26,14 +26,12 @@ interface TrackingStep {
 export class Tracker implements OnInit, OnDestroy {
   deliveryInfo: DeliveryData | null = null;
   currentOrder: MemosOrder | null = null;
-  currentStepIndex = 0;
-  selectedCam = 'CAM-00';
-  statusStepIndex = -1; // Progreso real simulado, independiente de la cámara seleccionada.
-  viewingOtherCamera = false;
+  private statusStepIndex = -1;
   private lastOrderId: string | null = null;
+  private previewCamera: TrackingStep | null = null;
+  private cameraSwitchTimer?: ReturnType<typeof setTimeout>;
 
-  steps: TrackingStep[] = [
-    { step: 0, label: 'PAGO', camId: 'CAM-00', camName: 'PAGO APROBADO', statusText: 'Pago confirmado', detail: 'El sistema generó el ticket y el pedido quedó registrado.', image: '/assets/memos/tracker/cam-01-preparacion.webp' },
+  readonly steps: TrackingStep[] = [
     { step: 1, label: 'COCINA', camId: 'CAM-01', camName: 'PREPARACIÓN DE LA PIZZA', statusText: 'Preparación de ingredientes', detail: 'Nuestro equipo prepara la masa y agrega los ingredientes de tu pedido.', image: '/assets/memos/tracker/cam-01-preparacion.webp' },
     { step: 2, label: 'HORNO', camId: 'CAM-02', camName: 'COCCIÓN', statusText: 'Pizza en el horno', detail: 'Escena ilustrativa del proceso de horneado de Memo’s Pizza.', image: '/assets/memos/tracker/cam-02-horno.webp' },
     { step: 3, label: 'EMPAQUE', camId: 'CAM-04', camName: 'EMPAQUE', statusText: 'Verificación y empaque', detail: 'La pizza se coloca en su caja y se comprueba el contenido.', image: '/assets/memos/tracker/cam-04-empaque.webp' },
@@ -64,6 +62,7 @@ export class Tracker implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.refreshSub?.unsubscribe();
     this.ordersSub?.unsubscribe();
+    clearTimeout(this.cameraSwitchTimer);
   }
 
   private syncOrder(): void {
@@ -73,26 +72,17 @@ export class Tracker implements OnInit, OnDestroy {
       catch { email = ''; }
     }
     const order = email ? (this.ordersService.getLatestActiveOrder(email) || this.ordersService.getOrdersForUser(email)[0] || null) : null;
-    this.currentOrder = order;
-    if (order) {
-      const status = this.ordersService.getEffectiveStatus(order);
-      const nextStep = this.stepFromStatus(status);
-      const changedOrder = this.lastOrderId !== order.id;
-      if (changedOrder) {
-        this.viewingOtherCamera = false;
-        this.lastOrderId = order.id;
-      }
-      // Los cambios automáticos no deben sobrescribirse al cambiar manualmente la cámara.
-      if (changedOrder || !this.viewingOtherCamera) {
-        this.currentStepIndex = Math.max(0, nextStep);
-        this.selectedCam = this.steps[this.currentStepIndex].camId;
-      }
-      this.statusStepIndex = nextStep;
-      this.deliveryInfo = order.delivery;
-    } else {
-      this.lastOrderId = null;
-      this.statusStepIndex = -1;
+    const orderId = order?.id ?? null;
+    const nextStep = order ? this.stepFromStatus(this.ordersService.getEffectiveStatus(order)) : -1;
+    if (this.lastOrderId !== orderId || this.statusStepIndex !== nextStep) {
+      clearTimeout(this.cameraSwitchTimer);
+      this.previewCamera = null;
+      this.cctvStatic = false;
     }
+    this.currentOrder = order;
+    this.lastOrderId = orderId;
+    this.statusStepIndex = nextStep;
+    if (order) this.deliveryInfo = order.delivery;
     this.cdr.markForCheck();
   }
 
@@ -109,22 +99,18 @@ export class Tracker implements OnInit, OnDestroy {
     }
   }
 
-  switchCam(camId: string, stepIndex?: number) {
-    this.viewingOtherCamera = true;
+  switchCam(camera: TrackingStep): void {
+    clearTimeout(this.cameraSwitchTimer);
     this.cctvStatic = true;
-    setTimeout(() => {
-      this.selectedCam = camId;
-      if (stepIndex !== undefined) this.currentStepIndex = stepIndex;
+    this.cameraSwitchTimer = setTimeout(() => {
+      this.previewCamera = camera;
       this.cctvStatic = false;
       this.cdr.markForCheck();
     }, 180);
   }
 
-  followCurrentStatus(): void {
-    this.viewingOtherCamera = false;
-    this.currentStepIndex = Math.max(0, this.statusStepIndex);
-    this.selectedCam = this.steps[this.currentStepIndex].camId;
-    this.cdr.markForCheck();
+  get activeCameraStep(): number {
+    return Math.max(1, this.statusStepIndex);
   }
 
   get progressPercent(): number {
@@ -136,24 +122,8 @@ export class Tracker implements OnInit, OnDestroy {
     return !!this.currentOrder && this.ordersService.getEffectiveStatus(this.currentOrder) === 'cancelado';
   }
 
-  nextStatus() {
-    if (!this.currentOrder) return;
-    if (this.currentStepIndex < this.steps.length - 1) {
-      this.currentStepIndex++;
-      this.switchCam(this.steps[this.currentStepIndex].camId);
-    }
-  }
-
-  prevStatus() {
-    if (!this.currentOrder) return;
-    if (this.currentStepIndex > 0) {
-      this.currentStepIndex--;
-      this.switchCam(this.steps[this.currentStepIndex].camId);
-    }
-  }
-
   get currentStep(): TrackingStep {
-    return this.steps[this.currentStepIndex];
+    return this.previewCamera ?? this.steps[this.activeCameraStep - 1];
   }
 
   get orderStatusLabel(): string {

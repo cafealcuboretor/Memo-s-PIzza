@@ -54,29 +54,23 @@
       <div class="tracker-progress-rail" role="progressbar" [attr.aria-valuenow]="progressPercent" aria-valuemin="0" aria-valuemax="100" aria-label="Avance de la orden">
         <span [style.width.%]="progressPercent"></span>
       </div>
-      <p class="tracker-instruction">Los cuadros iluminados muestran la etapa actual del pedido. Selecciona una escena para conocer cada paso.</p>
+      <p class="tracker-instruction">La ruta se actualiza con el avance del pedido. Puedes consultar las escenas en Canales disponibles.</p>
 
       <div class="fnaf-track-grid">
         @for (item of steps; track item.step) {
-          <div class="track-node-wrapper" (click)="switchCam(item.camId, item.step)">
-            <div class="track-box" [class.active-node]="currentStepIndex >= item.step" [class.current-node]="currentStepIndex === item.step">
+          <div class="track-node-wrapper" (click)="switchCam(item)">
+            <div class="track-box" [class.active-node]="activeCameraStep >= item.step" [class.current-node]="activeCameraStep === item.step">
               <span class="node-id">{{ item.camId }}</span>
               <span class="node-name">{{ item.label }}</span>
-              @if (currentStepIndex === item.step) {
+              @if (activeCameraStep === item.step) {
                 <img src="golden.png" alt="Marcador de pedido" class="golden-tracker-token" />
               }
             </div>
             @if (!$last) {
-              <div class="track-pipe" [class.pipe-active]="currentStepIndex > item.step"></div>
+              <div class="track-pipe" [class.pipe-active]="activeCameraStep > item.step"></div>
             }
           </div>
         }
-      </div>
-
-      <div class="d-flex justify-content-center gap-3 mt-4">
-        <button class="btn btn-outline-info btn-sm" (click)="prevStatus()" [disabled]="currentStepIndex === 0 || !currentOrder">◀ Escena anterior</button>
-        <button class="btn btn-outline-warning btn-sm fw-bold" type="button" (click)="followCurrentStatus()" [disabled]="!currentOrder">Ver etapa actual</button>
-        <button class="btn btn-warning btn-sm text-dark fw-bold px-4" (click)="nextStatus()" [disabled]="currentStepIndex === steps.length - 1 || !currentOrder">Escena siguiente ▶</button>
       </div>
     </div>
 
@@ -132,11 +126,12 @@
             @for (item of steps; track item.step) {
               <button
                 class="btn btn-sm text-start font-monospace d-flex justify-content-between"
-                [class.btn-outline-info]="selectedCam !== item.camId"
-                [class.btn-info]="selectedCam === item.camId"
-                (click)="switchCam(item.camId, item.step)" [attr.aria-label]="'Mostrar ' + item.camName">
+                [class.btn-outline-info]="currentStep.camId !== item.camId"
+                [class.btn-info]="currentStep.camId === item.camId"
+                (click)="switchCam(item)" [attr.aria-label]="'Mostrar ' + item.camName"
+                [attr.aria-pressed]="currentStep.camId === item.camId">
                 <span>{{ item.camId }} - {{ item.label }}</span>
-                @if (statusStepIndex === item.step && !isCancelled) { <span>●</span> }
+                @if (currentOrder && activeCameraStep === item.step && !isCancelled) { <span>●</span> }
               </button>
             }
           </div>
