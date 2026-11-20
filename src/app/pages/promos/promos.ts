@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, afterNextRender, inject } from '@angular/core';
 import { CartService } from '../../services/cart';
 import { CatalogProduct, CatalogService } from '../../services/catalog';
+import { promotionTerms } from './promotion-terms';
 
 @Component({
   selector: 'app-promos',
@@ -15,6 +16,7 @@ export class Promos {
   private readonly catalogService = inject(CatalogService);
 
   readonly catalogStatus = this.catalogService.status;
+  readonly promotionTerms = promotionTerms;
 
   constructor() {
     afterNextRender(() => this.loadCatalog());
