@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, Inject, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { TermsContent } from '../../shared/terms-content/terms-content';
@@ -7,6 +7,7 @@ import { DemoCard, DemoCardsService } from '../../services/demo-cards';
 import { CartService, DeliveryData } from '../../services/cart';
 import { OrdersService, MemosOrder } from '../../services/orders';
 import { PrivacyPreferencesService } from '../../services/privacy-preferences';
+import { AccountsService, apiErrorMessage } from '../../services/accounts';
 
 interface SessionUser {
   name: string;
@@ -24,6 +25,11 @@ type AccountTab = 'perfil' | 'ajustes' | 'pagos' | 'direcciones' | 'notificacion
   styleUrl: './settings.css'
 })
 export class Settings implements OnInit {
+  private readonly accounts = inject(AccountsService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
+  accountError = '';
+  loggingOut = false;
   user: SessionUser | null = null;
   currentTab: AccountTab = 'perfil';
   showTerms = false;
@@ -55,24 +61,27 @@ export class Settings implements OnInit {
     private privacy: PrivacyPreferencesService
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     if (!isPlatformBrowser(this.platformId)) return;
     try {
-      const stored = sessionStorage.getItem('memos_current_user');
-      const parsed = stored ? JSON.parse(stored) as SessionUser : null;
-      if (!parsed?.email || !parsed?.name) {
-        this.router.navigate(['/login']);
+      const account = await this.accounts.refresh();
+      if (this.destroyRef.destroyed) return;
+      if (!account) {
+        void this.router.navigate(['/login'], { queryParams: { returnUrl: '/ajustes' } });
         return;
       }
-      this.user = parsed;
+      this.user = account;
       this.refreshDemoCards();
       this.address = this.cartService.getDeliveryData();
-      this.recentOrders = this.ordersService.getOrdersForUser(parsed.email).slice(0, 5);
       this.volume = this.privacy.readAudioVolume();
       this.rememberVolume = !!this.privacy.current?.audioPersonalization;
       this.rememberAddress = !!this.privacy.current?.rememberDelivery;
-    } catch {
-      this.router.navigate(['/login']);
+      await this.ordersService.refresh();
+      this.recentOrders = this.ordersService.getOrdersForUser(account.email).slice(0, 5);
+    } catch (cause) {
+      this.accountError = apiErrorMessage(cause, 'No se pudo cargar tu cuenta.');
+    } finally {
+      if (!this.destroyRef.destroyed) this.cdr.markForCheck();
     }
   }
 
@@ -208,8 +217,21 @@ export class Settings implements OnInit {
     }).length;
   }
 
-  logout(): void {
-    if (isPlatformBrowser(this.platformId)) sessionStorage.removeItem('memos_current_user');
-    this.router.navigate(['/']);
+  async logout(): Promise<void> {
+    if (this.loggingOut) return;
+    this.loggingOut = true;
+    this.accountError = '';
+    try {
+      await this.accounts.logout();
+      this.user = null;
+      this.recentOrders = [];
+      this.cartService.clearDeliveryData();
+      void this.router.navigate(['/']);
+    } catch (cause) {
+      this.accountError = apiErrorMessage(cause, 'No se pudo cerrar la sesión. Intenta de nuevo.');
+    } finally {
+      this.loggingOut = false;
+      if (!this.destroyRef.destroyed) this.cdr.markForCheck();
+    }
   }
 }

@@ -1,8 +1,9 @@
-import { Component, Inject, PLATFORM_ID, OnInit, ChangeDetectorRef } from '@angular/core';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Component, Inject, PLATFORM_ID, OnInit, ChangeDetectorRef, afterNextRender, inject } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { CartService } from '../../services/cart';
 import { PrivacyPreferencesService } from '../../services/privacy-preferences';
+import { AccountsService } from '../../services/accounts';
 
 @Component({
   selector: 'app-header',
@@ -14,25 +15,19 @@ import { PrivacyPreferencesService } from '../../services/privacy-preferences';
 export class Header implements OnInit {
   isMusicOn = false;
   cartCount = 0;
-  isLoggedIn = false;
-  userName = '';
+  readonly user = inject(AccountsService).user;
   
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private cartService: CartService,
     private privacy: PrivacyPreferencesService,
-    private router: Router,
     private cdr: ChangeDetectorRef // <-- Herramienta para forzar a Angular a actualizar la pantalla
-  ) {}
+  ) {
+    const accounts = inject(AccountsService);
+    afterNextRender(() => { void accounts.refresh().catch(() => undefined); });
+  }
 
   ngOnInit() {
-    this.refreshSession();
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        this.refreshSession();
-        this.cdr.detectChanges();
-      }
-    });
     this.cartService.cart$.subscribe(items => {
       // Suma las cantidades
       this.cartCount = items.reduce((acc, item) => acc + item.quantity, 0);
@@ -40,18 +35,6 @@ export class Header implements OnInit {
       // ¡EL TRUCO ESTÁ AQUÍ! Obliga al menú a mostrar el nuevo número instantáneamente
       this.cdr.detectChanges(); 
     });
-  }
-
-  private refreshSession(): void {
-    if (!isPlatformBrowser(this.platformId)) return;
-    try {
-      const session = JSON.parse(sessionStorage.getItem('memos_current_user') || 'null');
-      this.isLoggedIn = !!session?.email;
-      this.userName = this.isLoggedIn ? (session.name || 'Mi cuenta') : '';
-    } catch {
-      this.isLoggedIn = false;
-      this.userName = '';
-    }
   }
 
   toggleMusic(): void {

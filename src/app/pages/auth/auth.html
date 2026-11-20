@@ -27,7 +27,9 @@
             <input type="password" class="form-control bg-secondary text-white border-0 py-2" [(ngModel)]="loginPassword" name="loginPassword" placeholder="••••••••" required>
           </div>
 
-          <button type="submit" class="btn btn-warning w-100 fw-bold py-2 shadow-sm mb-3">ENTRAR A MI CUENTA</button>
+          <button type="submit" class="btn btn-warning w-100 fw-bold py-2 shadow-sm mb-3" [disabled]="isLoggingIn || showTermsModal">
+            {{ isLoggingIn ? 'INICIANDO SESIÓN...' : 'ENTRAR A MI CUENTA' }}
+          </button>
         </form>
 
         <!-- Opción para ir al registro -->
@@ -57,7 +59,7 @@
 
           <div class="mb-3">
             <label class="form-label text-warning small fw-bold">CONTRASEÑA</label>
-            <input type="password" class="form-control bg-secondary text-white border-0 py-2" [(ngModel)]="regPassword" name="regPassword" placeholder="Mínimo 6 caracteres" required>
+            <input type="password" class="form-control bg-secondary text-white border-0 py-2" [(ngModel)]="regPassword" name="regPassword" placeholder="Mínimo 12 caracteres" minlength="12" autocomplete="new-password" required>
           </div>
 
           <div class="mb-4">
@@ -87,7 +89,6 @@
 
   </div>
 </div>
-<!-- La aceptación al registrarse GUARDA la cuenta temporal; NO inicia sesión. -->
 @if (showTermsModal) {
   <div class="terms-modal-backdrop" role="presentation">
     <div class="terms-modal-card bg-dark text-light border border-warning rounded shadow-lg" role="dialog" aria-modal="true" aria-labelledby="registro-terminos-titulo">

@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { interval, Subscription } from 'rxjs';
 import { CartService, DeliveryData } from '../../services/cart';
 import { MemosOrder, OrderStatus, OrdersService } from '../../services/orders';
+import { AccountsService, apiErrorMessage } from '../../services/accounts';
 
 interface TrackingStep {
   step: number;
@@ -26,6 +27,7 @@ interface TrackingStep {
 export class Tracker implements OnInit, OnDestroy {
   deliveryInfo: DeliveryData | null = null;
   currentOrder: MemosOrder | null = null;
+  loadError = '';
   private statusStepIndex = -1;
   private lastOrderId: string | null = null;
   private previewCamera: TrackingStep | null = null;
@@ -46,6 +48,7 @@ export class Tracker implements OnInit, OnDestroy {
   constructor(
     private cartService: CartService,
     public ordersService: OrdersService,
+    private accounts: AccountsService,
     private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: object
   ) {}
@@ -56,7 +59,13 @@ export class Tracker implements OnInit, OnDestroy {
     });
     this.ordersSub = this.ordersService.orders$.subscribe(() => this.syncOrder());
     this.syncOrder();
-    this.refreshSub = interval(3000).subscribe(() => this.syncOrder());
+    if (isPlatformBrowser(this.platformId)) {
+      void this.loadOrder();
+      this.refreshSub = interval(3000).subscribe(() => {
+        this.syncOrder();
+        if (this.accounts.user() || this.loadError) void this.loadOrder();
+      });
+    }
   }
 
   ngOnDestroy(): void {
@@ -65,12 +74,18 @@ export class Tracker implements OnInit, OnDestroy {
     clearTimeout(this.cameraSwitchTimer);
   }
 
-  private syncOrder(): void {
-    let email = '';
-    if (isPlatformBrowser(this.platformId)) {
-      try { email = String(JSON.parse(sessionStorage.getItem('memos_current_user') || 'null')?.email || ''); }
-      catch { email = ''; }
+  private async loadOrder(): Promise<void> {
+    try {
+      if (await this.accounts.refresh()) await this.ordersService.refresh();
+      this.loadError = '';
+    } catch (cause) {
+      this.loadError = apiErrorMessage(cause, 'No se pudo actualizar el tracker.');
     }
+    if (!this.ordersSub?.closed) this.syncOrder();
+  }
+
+  private syncOrder(): void {
+    const email = this.accounts.user()?.email ?? '';
     const order = email ? (this.ordersService.getLatestActiveOrder(email) || this.ordersService.getOrdersForUser(email)[0] || null) : null;
     const orderId = order?.id ?? null;
     const nextStep = order ? this.stepFromStatus(this.ordersService.getEffectiveStatus(order)) : -1;

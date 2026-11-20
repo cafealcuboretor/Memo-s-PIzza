@@ -1,10 +1,11 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, Inject, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { interval, Subscription } from 'rxjs';
 import { NotificationService } from '../../services/notification';
 import { MemosOrder, OrdersService } from '../../services/orders';
+import { AccountsService, apiErrorMessage } from '../../services/accounts';
 
 @Component({
   selector: 'app-my-orders',
@@ -14,6 +15,10 @@ import { MemosOrder, OrdersService } from '../../services/orders';
   styleUrl: './my-orders.css'
 })
 export class MyOrders implements OnInit, OnDestroy {
+  private readonly accounts = inject(AccountsService);
+  private readonly destroyRef = inject(DestroyRef);
+  loading = true;
+  loadError = '';
   currentOrders: MemosOrder[] = [];
   completedOrders: MemosOrder[] = [];
   cancelledOrders: MemosOrder[] = [];
@@ -43,28 +48,48 @@ export class MyOrders implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     if (!isPlatformBrowser(this.platformId)) return;
     try {
-      const session = JSON.parse(sessionStorage.getItem('memos_current_user') || 'null');
-      if (!session?.email) {
-        this.router.navigate(['/login'], { queryParams: { returnUrl: '/mis-pedidos' } });
+      const account = await this.accounts.refresh();
+      if (this.destroyRef.destroyed) return;
+      if (!account) {
+        void this.router.navigate(['/login'], { queryParams: { returnUrl: '/mis-pedidos' } });
         return;
       }
-      this.userEmail = session.email;
-    } catch {
-      this.router.navigate(['/login'], { queryParams: { returnUrl: '/mis-pedidos' } });
-      return;
+      this.userEmail = account.email;
+      this.sub = this.ordersService.orders$.subscribe(() => this.refreshLists());
+      this.refreshSub = interval(1000).subscribe(seconds => {
+        this.refreshLists();
+        if (seconds % 3 === 2) void this.loadOrders();
+      });
+      await this.loadOrders();
+    } catch (cause) {
+      this.loadError = apiErrorMessage(cause, 'No se pudo comprobar tu cuenta.');
+    } finally {
+      this.loading = false;
+      if (!this.destroyRef.destroyed) this.cdr.markForCheck();
     }
-
-    this.sub = this.ordersService.orders$.subscribe(() => this.refreshLists());
-    this.refreshLists();
-    this.refreshSub = interval(1000).subscribe(() => this.refreshLists());
   }
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
     this.refreshSub?.unsubscribe();
+  }
+
+  async loadOrders(): Promise<void> {
+    try {
+      await this.ordersService.refresh();
+      this.loadError = '';
+    } catch (cause) {
+      if (this.destroyRef.destroyed) return;
+      if (!this.accounts.user()) {
+        void this.router.navigate(['/login'], { queryParams: { returnUrl: '/mis-pedidos' } });
+        return;
+      }
+      this.loadError = apiErrorMessage(cause, 'No se pudieron actualizar tus pedidos.');
+    }
+    if (!this.destroyRef.destroyed) this.cdr.markForCheck();
   }
 
   private refreshLists(): void {
@@ -135,16 +160,16 @@ export class MyOrders implements OnInit, OnDestroy {
     this.closeCancelModal();
     this.notify.show(
       cancelled.payment.method === 'tarjeta'
-        ? `El pedido ${cancelled.folio} se canceló y el reembolso quedó registrado.`
-        : `El pedido ${cancelled.folio} fue cancelado correctamente.`,
-      'PEDIDO CANCELADO', 'success', 5000
+        ? `Se simuló el reembolso de ${cancelled.folio} en este navegador.`
+        : `Se simuló la cancelación de ${cancelled.folio} en este navegador.`,
+      'SIMULACIÓN REGISTRADA', 'success', 5000
     );
     this.refreshLists();
   }
 
   refundLabel(order: MemosOrder): string {
     if (order.payment.method === 'efectivo') return 'Sin reembolso: pago en efectivo';
-    return order.refund?.status === 'registrado' ? 'Reembolso registrado' : 'Estado del reembolso no disponible';
+    return order.refund?.status === 'registrado' ? 'Reembolso simulado' : 'Estado del reembolso no disponible';
   }
 
   openReceipt(order: MemosOrder): void {
@@ -157,6 +182,6 @@ export class MyOrders implements OnInit, OnDestroy {
   }
 
   getPaymentMethodLabel(order: MemosOrder): string {
-    return order.payment.method === 'tarjeta' ? 'Tarjeta' : 'Efectivo';
+    return order.payment.method === 'tarjeta' ? 'Tarjeta simulada' : 'Efectivo simulado';
   }
 }
