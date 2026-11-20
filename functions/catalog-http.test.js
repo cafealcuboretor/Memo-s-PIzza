@@ -2,9 +2,9 @@ const { strict: assert } = require('node:assert');
 const { once } = require('node:events');
 const { createServer } = require('node:http');
 const { after, before, test } = require('node:test');
-const { handleCatalog } = require('./catalog-http');
+const { createCatalogHandler } = require('./catalog-http');
 
-const server = createServer(handleCatalog);
+const server = createServer(createCatalogHandler());
 let base;
 
 before(async () => {
