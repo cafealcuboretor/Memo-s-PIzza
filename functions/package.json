@@ -1,0 +1,16 @@
+{
+  "name": "memos-pizza-api",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": "24"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "firebase-admin": "14.5.1",
+    "firebase-functions": "7.4.0"
+  }
+}

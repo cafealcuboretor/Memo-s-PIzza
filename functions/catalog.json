@@ -1,0 +1,244 @@
+[
+  {
+    "id": "pz-freddy",
+    "name": "La Fazbear Especial",
+    "category": "pizzas",
+    "description": "Doble porción de pepperoni crujiente, queso provolone ahumado y orilla de ajo.",
+    "priceCents": 21900,
+    "emoji": "🍕",
+    "image": "/La Fazbear Especial.webp",
+    "tag": "MÁS PEDIDA"
+  },
+  {
+    "id": "pz-bonnie",
+    "name": "Guitar Jam Clásica",
+    "category": "pizzas",
+    "description": "Base de 4 quesos selectos, albahaca fresca y salsa marinara de la casa.",
+    "priceCents": 18900,
+    "emoji": "🍕",
+    "image": "/Guitar Jam Clásica.webp"
+  },
+  {
+    "id": "pz-foxy",
+    "name": "Garfio Hawaiano",
+    "category": "pizzas",
+    "description": "Jamón horneado, piña caramelizada al sartén y toque ligero de jalapeño.",
+    "priceCents": 19900,
+    "emoji": "🍕",
+    "image": "/Garfio Hawaiano.webp"
+  },
+  {
+    "id": "pz-carnivora",
+    "name": "Festín Carnívoro",
+    "category": "pizzas",
+    "description": "Salchicha italiana, tocino ahumado, carne molida especiada y pepperoni.",
+    "priceCents": 23900,
+    "emoji": "🥩",
+    "image": "/Festín Carnívoro.webp",
+    "tag": "ESPECIAL"
+  },
+  {
+    "id": "bev-cola",
+    "name": "Refresco Faz-Cola",
+    "category": "bebidas",
+    "description": "Refresco clásico de cola bien frío servido en vaso coleccionable de 600ml.",
+    "priceCents": 4500,
+    "emoji": "🥤",
+    "image": "/Refresco Faz-Cola.webp"
+  },
+  {
+    "id": "bev-shake",
+    "name": "Malteada de Vainilla",
+    "category": "bebidas",
+    "description": "Batido espeso artesanal con crema batida y cereza en almíbar.",
+    "priceCents": 6500,
+    "emoji": "🥛",
+    "image": "/Malteada de Vainilla.webp"
+  },
+  {
+    "id": "bev-jugo",
+    "name": "Ponche Pirata",
+    "category": "bebidas",
+    "description": "Jugo tropical natural de fresa, naranja y arándano.",
+    "priceCents": 5000,
+    "emoji": "🧃",
+    "image": "/Ponche Pirata.webp"
+  },
+  {
+    "id": "dst-chica",
+    "name": "Cupcake de Chica",
+    "category": "postres",
+    "description": "Pastelillo esponjoso de terciopelo con betún rosa y chispas de colores.",
+    "priceCents": 5500,
+    "emoji": "🧁",
+    "image": "/Cupcake de Chica.webp",
+    "tag": "FAVORITO"
+  },
+  {
+    "id": "dst-brownie",
+    "name": "Brownie Turno Nocturno",
+    "category": "postres",
+    "description": "Bizcocho denso de chocolate amargo con nuez y centro fundido.",
+    "priceCents": 6000,
+    "emoji": "🍫",
+    "image": "/Brownie Turno Nocturno.webp"
+  },
+  {
+    "id": "pz-hawaiana-memo",
+    "name": "Hawaiana Especial de Memo",
+    "category": "pizzas",
+    "description": "Piña dorada, carne sazonada, pimientos frescos, cebolla morada y queso fundido.",
+    "priceCents": 21500,
+    "emoji": "🍍",
+    "image": "/assets/memos/catalogo/pizza-hawaiana-especial.webp",
+    "tag": "NUEVA"
+  },
+  {
+    "id": "pz-mexicana-memo",
+    "name": "Mexicana Picante",
+    "category": "pizzas",
+    "description": "Chorizo, jalapeños, cebolla morada, cilantro y nuestra salsa de tomate.",
+    "priceCents": 22500,
+    "emoji": "🌶️",
+    "image": "/assets/memos/catalogo/pizza-mexicana-picante.webp",
+    "tag": "PICANTE"
+  },
+  {
+    "id": "pz-veggie-memo",
+    "name": "Huerto de Medianoche",
+    "category": "pizzas",
+    "description": "Champiñones, aceitunas negras, pimientos, cebolla y tomates frescos.",
+    "priceCents": 20500,
+    "emoji": "🥬",
+    "image": "/assets/memos/catalogo/pizza-vegetariana.webp"
+  },
+  {
+    "id": "pz-margarita-memo",
+    "name": "Margarita de la Casa",
+    "category": "pizzas",
+    "description": "Mozzarella gratinada, jitomate, albahaca y un toque de aceite de oliva.",
+    "priceCents": 18500,
+    "emoji": "🌿",
+    "image": "/assets/memos/catalogo/pizza-margarita.webp"
+  },
+  {
+    "id": "pz-pepperoni-memo",
+    "name": "Pepperoni Retro",
+    "category": "pizzas",
+    "description": "Pepperoni generoso, mozzarella, salsa de tomate y orilla dorada.",
+    "priceCents": 19900,
+    "emoji": "🍕",
+    "image": "/assets/memos/catalogo/pizza-pepperoni.webp"
+  },
+  {
+    "id": "bev-lime-memo",
+    "name": "Lime Splash",
+    "category": "bebidas",
+    "description": "Refresco frío sabor limón-lima, presentación de 600 ml.",
+    "priceCents": 3900,
+    "emoji": "🥤",
+    "image": "/assets/memos/catalogo/lime-splash.webp",
+    "tag": "NUEVO"
+  },
+  {
+    "id": "bev-berry-memo",
+    "name": "Berry Burst",
+    "category": "bebidas",
+    "description": "Refresco burbujeante sabor fresa, presentación de 2 L.",
+    "priceCents": 5900,
+    "emoji": "🍓",
+    "image": "/assets/memos/catalogo/berry-burst.webp"
+  },
+  {
+    "id": "dst-mousse-memo",
+    "name": "Mousse Choco-Memo",
+    "category": "postres",
+    "description": "Mousse de chocolate cremoso servido en vaso con crema y virutas de cacao.",
+    "priceCents": 7500,
+    "emoji": "🍫",
+    "image": "/assets/memos/catalogo/mousse-choco-memo.webp"
+  },
+  {
+    "id": "dst-mini-cheesecake",
+    "name": "Mini Cheesecake Fresa Noche",
+    "category": "postres",
+    "description": "Mini cheesecake con fresa bañada en chocolate y base de galleta.",
+    "priceCents": 7900,
+    "emoji": "🍓",
+    "image": "/assets/memos/catalogo/mini-cheesecakes-fresa.webp",
+    "tag": "NUEVO"
+  },
+  {
+    "id": "dst-pay-limon",
+    "name": "Pay de Limón",
+    "category": "postres",
+    "description": "Rebanada cremosa de limón con base crujiente, crema batida y ralladura.",
+    "priceCents": 6900,
+    "emoji": "🍋",
+    "image": "/assets/memos/catalogo/pay-limon.webp"
+  },
+  {
+    "id": "dst-flan-chocolate",
+    "name": "Flan de Chocolate",
+    "category": "postres",
+    "description": "Flan de chocolate suave, acompañado de virutas de chocolate oscuro.",
+    "priceCents": 6500,
+    "emoji": "🍮",
+    "image": "/assets/memos/catalogo/flan-chocolate.webp"
+  },
+  {
+    "id": "combo-guardia",
+    "name": "COMBO GUARDIA NOCTURNA",
+    "category": "promociones",
+    "description": "2 Pizzas Grandes Pepperoni + 2 Bebidas + Pan de Ajo.",
+    "priceCents": 24900,
+    "emoji": "🍕",
+    "image": "/assets/memos/promociones/combo-guardia.webp",
+    "badgeText": "30% OFF",
+    "badgeColor": "bg-danger"
+  },
+  {
+    "id": "favorita-memo",
+    "name": "LA FAVORITA DE MEMO",
+    "category": "promociones",
+    "description": "Lleva dos pizzas medianas de especialidad al precio de una.",
+    "priceCents": 19900,
+    "emoji": "🍕",
+    "image": "/assets/memos/promociones/dos-por-uno.webp",
+    "badgeText": "2x1",
+    "badgeColor": "bg-danger"
+  },
+  {
+    "id": "especial-animatronico",
+    "name": "ESPECIAL ANIMATRÓNICO",
+    "category": "promociones",
+    "description": "Pizza Familiar de Carnes Frías + Orilla de Queso rellena.",
+    "priceCents": 29900,
+    "emoji": "🍕",
+    "image": "/assets/memos/promociones/pizza-especial.webp",
+    "badgeText": "PROMO",
+    "badgeColor": "bg-success"
+  },
+  {
+    "id": "postre-oficina",
+    "name": "POSTRE DE LA OFICINA",
+    "category": "promociones",
+    "description": "Pastelillo de chocolate oscuro con chispa sorpresa.",
+    "priceCents": 8900,
+    "emoji": "🍕",
+    "image": "/assets/memos/promociones/postres.webp",
+    "badgeText": "NUEVO",
+    "badgeColor": "bg-warning text-dark"
+  },
+  {
+    "id": "combo-memo-refresco",
+    "name": "COMBO MEMO CON REFRESCO",
+    "category": "promociones",
+    "description": "Pizza de pepperoni, refresco de fresa y un mini postre. Disponible dentro de nuestras promociones; sujeta a disponibilidad.",
+    "priceCents": 27900,
+    "emoji": "🍕",
+    "image": "/assets/memos/promociones/combo-refresco.webp",
+    "badgeText": "COMBO",
+    "badgeColor": "bg-danger"
+  }
+]

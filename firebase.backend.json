@@ -1,0 +1,17 @@
+{
+  "functions": {
+    "source": "functions",
+    "codebase": "memos-pizza-api",
+    "runtime": "nodejs24",
+    "ignore": ["node_modules", ".git", "firebase-debug.log", "firebase-debug.*.log", "*.test.js"]
+  },
+  "emulators": {
+    "functions": {
+      "host": "127.0.0.1",
+      "port": 5001
+    },
+    "ui": {
+      "enabled": false
+    }
+  }
+}
