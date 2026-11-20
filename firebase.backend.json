@@ -3,7 +3,7 @@
     "source": "functions",
     "codebase": "memos-pizza-api",
     "runtime": "nodejs24",
-    "ignore": ["node_modules", ".git", "firebase-debug.log", "firebase-debug.*.log", "*.test.js"]
+    "ignore": ["node_modules", ".git", ".env.local", ".secret.local", "firebase-debug.log", "firebase-debug.*.log", "*.test.js", "serve-local.js"]
   },
   "emulators": {
     "functions": {

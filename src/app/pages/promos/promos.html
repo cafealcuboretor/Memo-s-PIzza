@@ -5,6 +5,14 @@
       MENÚ DE OFERTAS
     </h2>
     
+    @if (catalogStatus() === 'loading') {
+      <p class="text-center text-light" role="status">Cargando promociones…</p>
+    } @else if (catalogStatus() === 'error') {
+      <div class="text-center text-light" role="alert">
+        <p>No pudimos cargar las promociones.</p>
+        <button type="button" class="btn btn-outline-warning" (click)="loadCatalog()">Reintentar</button>
+      </div>
+    } @else {
     <div class="row g-4 justify-content-center">
       @for (item of ofertas; track item.id) {
         <div class="col-md-6 col-lg-6">
@@ -36,8 +44,11 @@
 
           </div>
         </div>
+      } @empty {
+        <p class="text-center text-light">Por ahora no hay promociones disponibles.</p>
       }
     </div>
+    }
 
   </div>
 </section>

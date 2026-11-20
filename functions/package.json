@@ -7,6 +7,7 @@
   },
   "main": "index.js",
   "scripts": {
+    "start:local": "node serve-local.js",
     "test": "node --test",
     "db:init": "node db/init-catalog.js"
   },

@@ -1,3 +1,5 @@
+const { Pool } = require('pg');
+
 async function readCatalog(pool) {
   const { rows: [catalog] } = await pool.query(`
     SELECT
@@ -21,4 +23,18 @@ async function readCatalog(pool) {
   return catalog;
 }
 
-module.exports = { readCatalog };
+function createCatalogReader(connectionString) {
+  if (!connectionString) {
+    throw new Error('Configura MEMOS_PIZZA_DATABASE_URL para consultar el catálogo.');
+  }
+  const pool = new Pool({
+    connectionString,
+    max: 3,
+    connectionTimeoutMillis: 3000,
+    idleTimeoutMillis: 10000,
+  });
+  pool.on('error', error => console.error('Se perdió una conexión de PostgreSQL.', error.code ?? ''));
+  return () => readCatalog(pool);
+}
+
+module.exports = { createCatalogReader, readCatalog };
