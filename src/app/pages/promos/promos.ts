@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CartService } from '../../services/cart'; 
+import { promotionTerms } from './promotion-terms';
 
 interface Promo {
   id: string;
@@ -20,6 +21,8 @@ interface Promo {
   styleUrl: './promos.css'
 })
 export class Promos {
+  readonly promotionTerms = promotionTerms;
+
   ofertas: Promo[] = [
     { 
       id: 'combo-guardia', 

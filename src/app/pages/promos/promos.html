@@ -18,10 +18,19 @@
                 </span>
                 <h5 class="text-warning fw-bold mb-2 title-promo">{{ item.name }}</h5>
                 <p class="text-secondary small mb-3 desc-promo">{{ item.description }}</p>
+                <dl class="small text-light mb-2">
+                  <dt>Vigencia</dt>
+                  <dd>{{ promotionTerms.validity }}</dd>
+                  <dt>Condiciones</dt>
+                  <dd>
+                    {{ promotionTerms.itemConditions[item.id] ?? 'Aplica a los productos indicados en esta ficha.' }}
+                    {{ promotionTerms.availability }}
+                  </dd>
+                </dl>
               </div>
               
               <div class="pt-2">
-                <div class="price-tag fw-bold mb-3">${{ item.price | number:'1.2-2' }}</div>
+                <div class="price-tag fw-bold mb-3">${{ item.price | number:'1.2-2' }} MXN</div>
                 <button class="btn btn-warning w-100 fw-bold border-0 text-dark rounded-2 py-2 btn-add" (click)="addToCart(item)">
                   Agregar al Carrito
                 </button>
