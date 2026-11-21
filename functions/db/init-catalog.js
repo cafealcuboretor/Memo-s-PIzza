@@ -1,11 +1,12 @@
 const { readFile } = require('node:fs/promises');
 const { join } = require('node:path');
 const { Client } = require('pg');
+const { connectionOptions } = require('./connection-options');
 const products = require('../catalog.json');
 
-async function initializeCatalog(connectionString) {
+async function initializeCatalog(connection) {
   const schema = await readFile(join(__dirname, '001_catalogo.sql'), 'utf8');
-  const client = new Client({ connectionString, connectionTimeoutMillis: 5000 });
+  const client = new Client({ ...connectionOptions(connection), connectionTimeoutMillis: 5000 });
   await client.connect();
 
   try {

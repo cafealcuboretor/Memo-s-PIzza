@@ -1,4 +1,5 @@
 const { Pool } = require('pg');
+const { connectionOptions } = require('./db/connection-options');
 
 async function readCatalog(pool) {
   const { rows: [catalog] } = await pool.query(`
@@ -23,12 +24,12 @@ async function readCatalog(pool) {
   return catalog;
 }
 
-function createCatalogReader(connectionString) {
-  if (!connectionString) {
+function createCatalogReader(connection) {
+  if (!connection) {
     throw new Error('Configura MEMOS_PIZZA_DATABASE_URL para consultar el catálogo.');
   }
   const pool = new Pool({
-    connectionString,
+    ...connectionOptions(connection),
     max: 3,
     connectionTimeoutMillis: 3000,
     idleTimeoutMillis: 10000,

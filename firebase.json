@@ -10,8 +10,8 @@
     "rewrites": [
       {
         "source": "/api/**",
-        "function": {
-          "functionId": "memosPizzaApi",
+        "run": {
+          "serviceId": "memos-pizza-api",
           "region": "us-central1"
         }
       },

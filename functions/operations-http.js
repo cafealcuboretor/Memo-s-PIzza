@@ -1,5 +1,6 @@
 const { randomUUID } = require('node:crypto');
 const { Pool } = require('pg');
+const { connectionOptions } = require('./db/connection-options');
 const { createAccounts, sessionToken, sessionCookie, termsVersion } = require('./accounts-postgres');
 const { createOrders, uuidPattern } = require('./orders-postgres');
 const { ApiError } = require('./operations-validation');
@@ -132,9 +133,9 @@ function createOperationsHandler(pool, { origins, secureCookies }) {
   };
 }
 
-function createApiHandler(catalog, operationUrl, options) {
-  const operations = operationUrl && createOperationsHandler(new Pool({
-    connectionString: operationUrl,
+function createApiHandler(catalog, operationConnection, options) {
+  const operations = operationConnection && createOperationsHandler(new Pool({
+    ...connectionOptions(operationConnection),
     max: 6,
     connectionTimeoutMillis: 5000,
     statement_timeout: 5000,

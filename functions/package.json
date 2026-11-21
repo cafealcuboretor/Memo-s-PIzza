@@ -12,6 +12,7 @@
     "db:init": "node db/init-catalog.js"
   },
   "dependencies": {
+    "@google-cloud/cloud-sql-connector": "1.13.0",
     "firebase-admin": "14.5.1",
     "firebase-functions": "7.4.0",
     "pg": "8.23.1"
