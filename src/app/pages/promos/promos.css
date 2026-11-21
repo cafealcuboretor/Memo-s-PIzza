@@ -20,6 +20,11 @@
   border-color: rgba(255, 193, 7, 0.3);
 }
 
+.content-side,
+.promo-img-wrapper {
+  width: 50%;
+}
+
 /* Textos y contenido */
 .content-side {
   background-color: #212529;
@@ -32,9 +37,24 @@
 }
 
 .desc-promo {
-  color: #a0a6ad !important;
+  color: #c4cdd6;
   line-height: 1.35;
   font-size: 0.82rem;
+}
+
+.promo-terms {
+  border-top: 1px solid rgba(255, 193, 7, 0.25);
+  padding-top: 0.65rem;
+  color: #d9dfe6;
+  line-height: 1.4;
+}
+
+.promo-terms dt {
+  color: #ffe2a1;
+}
+
+.promo-terms dd:last-child {
+  margin-bottom: 0;
 }
 
 .badge-custom {
@@ -87,4 +107,19 @@
 
 .promo-card:hover .promo-img {
   transform: scale(1.07);
+}
+
+@media (max-width: 575.98px) {
+  .content-side,
+  .promo-img-wrapper {
+    width: 100%;
+  }
+
+  .promo-img-wrapper {
+    height: 220px;
+  }
+
+  .img-gradient-overlay {
+    background: linear-gradient(to top, rgba(33, 37, 41, 0.45), transparent 35%);
+  }
 }

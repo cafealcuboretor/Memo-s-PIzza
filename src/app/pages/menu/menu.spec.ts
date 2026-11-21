@@ -22,11 +22,11 @@ describe('Menu', () => {
 
   afterEach(() => http.verify());
 
-  it('carga el menú mediante la API y envía al carrito el precio en pesos', async () => {
+  it('carga la foto del menú desde la API y envía al carrito el precio en pesos', async () => {
     fixture.detectChanges();
     http.expectOne(req => req.url === '/api/products').flush({
       items: [
-        { id: 'pizza-prueba', name: 'Pizza de prueba', category: 'pizzas', priceCents: 18750, description: '', emoji: '', image: '' },
+        { id: 'pizza-prueba', name: 'Pizza de prueba', category: 'pizzas', priceCents: 18750, description: '', emoji: '', image: '/Pizza de prueba.webp' },
         { id: 'promo-prueba', name: 'Promo de prueba', category: 'promociones', priceCents: 25000, description: '', emoji: '', image: '' },
       ],
       total: 2,
@@ -37,6 +37,9 @@ describe('Menu', () => {
 
     expect(component.filteredItems.map(item => item.name)).toEqual(['Pizza de prueba']);
     expect(component.filteredItems[0].price).toBe(187.5);
+    fixture.detectChanges();
+    const photo: HTMLImageElement | null = fixture.nativeElement.querySelector('img.product-img');
+    expect(photo?.getAttribute('src')).toBe('/Pizza de prueba.webp');
     const cart = TestBed.inject(CartService);
     cart.clearCart();
     try {

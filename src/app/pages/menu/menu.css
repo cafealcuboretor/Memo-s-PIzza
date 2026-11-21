@@ -2,6 +2,16 @@
   text-shadow: 0 0 10px rgba(255, 193, 7, 0.7), 0 0 20px rgba(255, 193, 7, 0.4);
 }
 
+.menu-intro,
+.menu-description {
+  color: #c4cdd6;
+}
+
+.menu-price {
+  color: #00ff88;
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+}
+
 /* Buscador de Comida */
 .menu-search-wrapper {
   position: relative;
@@ -30,7 +40,7 @@
 }
 
 .menu-search-input::placeholder {
-  color: #6c757d;
+  color: #aeb8c2;
 }
 
 .menu-search-input:focus {
