@@ -137,7 +137,7 @@
                 type="button"
                 class="btn btn-warning w-100 fw-bold fs-5 pulse-btn mt-4 py-3 text-dark"
                 [disabled]="cartItems.length === 0"
-                (click)="openPaymentModal()">
+                [disabled]="openingPayment" (click)="openPaymentModal()">
                 PAGAR AHORA
               </button>
               <a routerLink="/mis-pedidos" class="btn btn-outline-light w-100 fw-bold mt-2">Mis pedidos</a>
@@ -187,119 +187,33 @@
           class="btn btn-method flex-fill"
           [class.active-method]="paymentMethod === 'tarjeta'"
           (click)="selectPaymentMethod('tarjeta')">
-          💳 Tarjeta
+          💳 Tarjeta simulada
         </button>
       </div>
 
       @if (paymentMethod === 'efectivo') {
         <div class="cash-notice-box mb-3 shadow-sm">
-          <p class="mb-2"><strong>Cobro en puerta:</strong> pagarás en efectivo al repartidor al recibir tu pedido.</p>
-          <div class="total-cash-text">Monto total a preparar: ${{ total | number:'1.2-2' }}</div>
+          <p class="mb-2"><strong>Efectivo simulado.</strong> Representa un pago al recibir el pedido de prueba.</p>
+          <div class="total-cash-text">Total de la simulación ${{ total | number:'1.2-2' }}</div>
         </div>
       }
 
       @if (paymentMethod === 'tarjeta') {
         <div class="card-input-box mb-3">
-          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-            <div>
-              <h5 class="mb-1 text-warning fw-bold">Tus tarjetas</h5>
-              <p class="small demo-card-helper mb-0">Selecciona una tarjeta guardada o agrega una nueva para continuar con tu pedido.</p>
-            </div>
-            <span class="badge card-demo-badge">ENTORNO ACADÉMICO</span>
-          </div>
-
-          @if (savedCards.length > 0) {
-            <div class="saved-cards-area mb-3">
-              <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
-                <h6 class="text-light fw-bold mb-0">Tarjetas recordadas</h6>
-                <span class="small text-secondary">{{ savedCards.length }} en este navegador</span>
-              </div>
-              @for (card of savedCards; track card.id) {
-                <div class="saved-card-option" [class.selected-card]="selectedSavedCardId === card.id">
-                  <button class="saved-card-button" type="button" [attr.aria-pressed]="selectedSavedCardId === card.id" (click)="chooseSavedCard(card.id)">
-                    <span class="saved-card-icon">💳</span>
-                    <span class="saved-card-details">
-                      <strong>{{ card.nickname }}</strong>
-                      <small>{{ card.brand }} · •••• {{ card.last4 }} · Vence {{ card.expiry }}</small>
-                    </span>
-                    @if (selectedSavedCardId === card.id) {
-                      <span class="saved-card-selected">✓ Elegida</span>
-                    }
-                  </button>
-                  <button type="button" class="btn btn-outline-danger btn-sm saved-card-remove" (click)="removeSavedCard(card.id)" [attr.aria-label]="'Eliminar tarjeta terminación ' + card.last4">✕</button>
-                </div>
-              }
-              <button type="button" class="btn btn-outline-warning btn-sm w-100 mt-2 fw-bold" (click)="useNewDemoCard()">+ Agregar otra tarjeta de prueba</button>
-            </div>
-          }
-
-          @if (selectedSavedCard; as chosenCard) {
-            <div class="demo-selected-info mb-3">
-              <span class="demo-selected-label">Tarjeta seleccionada</span>
-              <strong class="d-block text-light">{{ chosenCard.holder }}</strong>
-              <span class="d-block text-light">{{ chosenCard.brand }} · •••• {{ chosenCard.last4 }}</span>
-              <small class="demo-card-helper">La tarjeta ya está seleccionada. Introduce el CVV de prueba para confirmar esta compra.</small>
-            </div>
-          } @else {
-            <div class="mb-3">
-              <label for="demo-card-holder" class="form-label payment-field-label">Nombre del titular</label>
-              <input id="demo-card-holder" type="text" name="demo_card_holder" autocomplete="off" spellcheck="false"
-                     class="form-control demo-payment-input" [(ngModel)]="cardHolder" placeholder="Ej. Cliente Memo" maxlength="90">
-            </div>
-            <div class="mb-2">
-              <label for="demo-card-number" class="form-label payment-field-label">Número de tarjeta</label>
-              <input id="demo-card-number" type="text" name="demo_card_number" autocomplete="off" inputmode="numeric"
-                     class="form-control demo-payment-input" [(ngModel)]="cardNumber" (input)="formatCardNumber()" maxlength="19" placeholder="4242 4242 4242 4242">
-            </div>
-            <div class="test-number-picker mb-3">
-              <span class="demo-card-helper d-block mb-2">Por seguridad, utiliza exclusivamente estas tarjetas de prueba. Nunca ingreses una tarjeta real:</span>
-              <div class="d-flex flex-wrap gap-2">
-                @for (test of demoNumbers; track test.digits) {
-                  <button class="test-number-button" type="button" (click)="useTestNumber(test.digits)">{{ test.label }} · {{ test.digits.slice(-4) }}</button>
-                }
-              </div>
-            </div>
-            <div class="mb-3">
-              <label for="demo-card-expiry" class="form-label payment-field-label">Fecha de vencimiento</label>
-              <input id="demo-card-expiry" type="text" name="demo_card_expiry" autocomplete="off" inputmode="numeric"
-                     class="form-control demo-payment-input" [(ngModel)]="cardExpiry" (input)="formatExpiry()" maxlength="5" placeholder="MM/AA">
-            </div>
-
-            <div class="form-check demo-remember-check mb-3">
-              <input id="remember-demo-card" class="form-check-input" type="checkbox" [(ngModel)]="rememberDemoCard">
-              <label for="remember-demo-card" class="form-check-label text-light fw-semibold">Guardar esta tarjeta en Memo's Pizza</label>
-              <small class="demo-card-helper d-block mt-1">Es opcional. Solo se guardarán alias, titular, vencimiento y últimos 4 dígitos en este navegador. Nunca el número completo ni el CVV.</small>
-            </div>
-            @if (rememberDemoCard) {
-              <div class="mb-3">
-                <label for="demo-card-nickname" class="form-label payment-field-label">Alias para reconocerla (opcional)</label>
-                <input id="demo-card-nickname" type="text" name="demo_card_nickname" autocomplete="off"
-                       class="form-control demo-payment-input" [(ngModel)]="cardNickname" maxlength="28" placeholder="Ej. Tarjeta personal">
-              </div>
-            }
-          }
-
-          <div class="demo-cvv-row">
-            <div>
-              <label for="demo-card-cvv" class="form-label payment-field-label">Código de seguridad (CVV)</label>
-              <input id="demo-card-cvv" type="password" name="demo_confirmation_pin" autocomplete="off" inputmode="numeric"
-                     class="form-control demo-payment-input" [(ngModel)]="cardCvv" minlength="3" maxlength="4" placeholder="123">
-            </div>
-            <span class="cvv-info">🔒 Se solicita en cada compra y se borra al finalizar.</span>
-          </div>
-
-          @if (paymentError) {
-            <div class="alert alert-danger py-2 mt-3 mb-0 payment-validation-error" role="alert">{{ paymentError }}</div>
-          }
+          <h5 class="mb-1 text-warning fw-bold">Tarjeta simulada</h5>
+          <p class="small demo-card-helper mb-0">La tienda guardará esta modalidad como parte de un pedido de prueba.</p>
         </div>
       }
 
-      <p class="small text-light-emphasis mt-3 mb-2">(Todo es con fines académicos). No se procesan cargos bancarios ni pedidos de entrega reales. Usa únicamente las tarjetas de prueba ofrecidas por la tienda.</p>
+      <p class="small text-light-emphasis mt-3 mb-2">Usa datos ficticios para la entrega. El flujo es académico y no genera cargos ni envíos.</p>
+      @if (paymentError) {
+        <div class="alert alert-danger py-2 mt-3 mb-0" role="alert">{{ paymentError }}</div>
+      }
 
       <div class="form-check my-3">
         <input class="form-check-input" type="checkbox" id="acepta-legal" [(ngModel)]="acceptedLegal">
         <label class="form-check-label" for="acepta-legal">
-          Confirmo mi pedido y acepto los <a routerLink="/ajustes" target="_blank" rel="noopener" class="text-warning">Términos y Condiciones</a>; también he leído el <a routerLink="/legal/privacidad" target="_blank" rel="noopener" class="text-warning">Aviso de Privacidad</a>.
+          Confirmo mi pedido de prueba y acepto los <a routerLink="/ajustes" target="_blank" rel="noopener" class="text-warning">Términos y Condiciones</a> y he leído el <a routerLink="/legal/privacidad" target="_blank" rel="noopener" class="text-warning">Aviso de Privacidad</a>.
         </label>
       </div>
 
@@ -333,7 +247,7 @@
       <p class="receipt-demo-notice">(Todo es con fines académicos). Este documento no es una factura fiscal ni acredita un cobro bancario real.</p>
       <div class="receipt-chip-grid">
         <div class="receipt-chip">
-          <span class="receipt-chip-label">Referencia de factura</span>
+          <span class="receipt-chip-label">Referencia de prueba</span>
           <strong>{{ completedOrder.payment.invoiceNumber }}</strong>
         </div>
         <div class="receipt-chip">
@@ -342,11 +256,11 @@
         </div>
         <div class="receipt-chip">
           <span class="receipt-chip-label">Método</span>
-          <strong>{{ completedOrder.payment.method === 'tarjeta' ? 'Tarjeta' : 'Efectivo' }}</strong>
+          <strong>{{ completedOrder.payment.method === 'tarjeta' ? 'Tarjeta simulada' : 'Efectivo simulado' }}</strong>
         </div>
         <div class="receipt-chip">
-          <span class="receipt-chip-label">Tarjeta / referencia</span>
-          <strong>{{ getMaskedCardNumber() }}</strong>
+          <span class="receipt-chip-label">Operación</span>
+          <strong>Demostración</strong>
         </div>
       </div>
 
@@ -355,7 +269,7 @@
           <h4 class="h6 text-warning mb-2">Cliente</h4>
           <p class="mb-1"><strong>{{ completedOrder.customer.name }}</strong></p>
           <p class="mb-1 text-secondary">{{ completedOrder.customer.email }}</p>
-          <p class="mb-0 text-secondary">{{ completedOrder.payment.paidAt }}</p>
+          <p class="mb-0 text-secondary">{{ completedOrder.createdAt | date:'dd/MM/yyyy, HH:mm' }}</p>
         </div>
         <div class="receipt-box">
           <h4 class="h6 text-warning mb-2">Entrega</h4>

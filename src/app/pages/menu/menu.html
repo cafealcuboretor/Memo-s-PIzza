@@ -43,6 +43,14 @@
     </div>
 
     <!-- Catálogo de Productos -->
+    @if (catalogStatus() === 'loading') {
+      <p class="text-center text-light" role="status">Cargando catálogo…</p>
+    } @else if (catalogStatus() === 'error') {
+      <div class="text-center" role="alert">
+        <p>No pudimos cargar el catálogo.</p>
+        <button type="button" class="btn btn-outline-warning" (click)="loadCatalog()">Reintentar</button>
+      </div>
+    } @else {
     <div class="row g-4">
       @for (item of filteredItems; track item.id) {
         <div class="col-12 col-md-6 col-lg-4">
@@ -98,6 +106,7 @@
         </div>
       }
     </div>
+    }
 
   </div>
 </section>

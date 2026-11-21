@@ -14,6 +14,7 @@
       </div>
     </div>
 
+    @if (loadError) { <p class="alert alert-warning" role="alert">{{ loadError }}</p> }
     @if (currentOrder) {
       <div class="tracker-order-summary mb-4" [class.tracker-order-cancelled]="isCancelled">
         <div class="tracker-summary-main">
@@ -47,7 +48,7 @@
       <div class="tracker-progress-header">
         <div>
           <span class="tracker-summary-kicker">RUTA DE TU PEDIDO</span>
-          <h3 class="tracker-progress-title mb-0">{{ isCancelled ? 'Pedido cancelado' : 'Progreso automático' }}</h3>
+          <h3 class="tracker-progress-title mb-0">{{ isCancelled ? 'Cancelación simulada' : 'Progreso automático' }}</h3>
         </div>
         <div class="tracker-progress-value">{{ progressPercent }}%</div>
       </div>

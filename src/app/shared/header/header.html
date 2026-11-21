@@ -53,17 +53,22 @@
         </li>
 
         <!-- Acceso rápido a pedidos cuando existe sesión activa -->
-        @if (isLoggedIn) {
+        @if (user()) {
           <li class="nav-item">
             <a class="nav-link text-white fw-semibold d-flex align-items-center gap-1 justify-content-center py-2" routerLink="/mis-pedidos" routerLinkActive="text-warning">
               <span>📦</span> MIS PEDIDOS
             </a>
           </li>
         }
+        @if (user()?.role === 'admin') {
+          <li class="nav-item">
+            <a class="nav-link text-warning fw-semibold" routerLink="/admin/pedidos" routerLinkActive="text-light">ADMINISTRACIÓN</a>
+          </li>
+        }
 
         <!-- Cambia de Iniciar sesión a Mi cuenta cuando se registra el cliente. -->
         <li class="nav-item">
-          @if (isLoggedIn) {
+          @if (user()) {
             <a class="nav-link text-warning fw-semibold d-flex align-items-center gap-1 justify-content-center py-2" routerLink="/ajustes">
               <span>👤</span> MI CUENTA
             </a>

@@ -1,7 +1,9 @@
-import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { BehaviorSubject } from 'rxjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { CartItem, DeliveryData } from './cart';
+import { AccountsService, TERMS_VERSION, WRITE_HEADERS } from './accounts';
 
 export type OrderStatus = 'pagado' | 'preparando' | 'horneando' | 'empaquetando' | 'en-camino' | 'entregado' | 'cancelado';
 export type PaymentMethod = 'efectivo' | 'tarjeta';
@@ -21,6 +23,7 @@ export interface ReceiptData {
   method: PaymentMethod;
   cardHolder?: string;
   cardLast4?: string;
+  simulated?: boolean;
 }
 
 export interface OrderCustomer {
@@ -33,6 +36,8 @@ export interface MemosOrder {
   folio: string;
   createdAt: string;
   status: OrderStatus;
+  source?: 'server';
+  nextStatus?: OrderStatus | null;
   items: CartItem[];
   delivery: DeliveryData;
   subtotal: number;
@@ -47,6 +52,9 @@ export interface MemosOrder {
 }
 
 const STORAGE_KEY = 'memos_orders_v1';
+const SIMULATIONS_KEY = 'memos_local_cancellations';
+const CHECKOUT_KEY = 'memos_checkout_attempt';
+type Cancellation = Pick<MemosOrder, 'cancelledAt' | 'cancellationReason' | 'cancellationComment' | 'refund'>;
 // La demo permite cancelar durante 60 segundos para una exposición rápida.
 // Una futura operación comercial contempla como política inicial 5 minutos;
 // no se presenta ese plazo como vigente en el prototipo.
@@ -56,8 +64,16 @@ const DELIVERY_AFTER_SECONDS = 110;
 
 @Injectable({ providedIn: 'root' })
 export class OrdersService {
+  private readonly http = inject(HttpClient);
+  private readonly accounts = inject(AccountsService);
   readonly cancellationWindowSeconds = CANCELLATION_WINDOW_MS / 1000;
-  private ordersSubject = new BehaviorSubject<MemosOrder[]>([]);
+  private localOrders: MemosOrder[] = [];
+  private serverOrders: MemosOrder[] = [];
+  private serverAccountId?: string;
+  private reload?: { accountId: string; finished: Promise<void> };
+  private attempt?: { fingerprint: string; id: string };
+  private cancelledLocally: Record<string, Cancellation> = {};
+  private ordersSubject = new BehaviorSubject<void>(undefined);
   orders$ = this.ordersSubject.asObservable();
 
   constructor(@Inject(PLATFORM_ID) private platformId: object) {
@@ -69,18 +85,19 @@ export class OrdersService {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       const parsed: unknown = raw ? JSON.parse(raw) : [];
-      this.ordersSubject.next(Array.isArray(parsed) ? parsed as MemosOrder[] : []);
-    } catch { this.ordersSubject.next([]); }
-  }
-
-  private persist(orders: MemosOrder[]): void {
-    if (!isPlatformBrowser(this.platformId)) return;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(orders));
-    this.ordersSubject.next([...orders]);
+      this.localOrders = Array.isArray(parsed) ? parsed as MemosOrder[] : [];
+      this.cancelledLocally = JSON.parse(localStorage.getItem(SIMULATIONS_KEY) || '{}') || {};
+      this.attempt = JSON.parse(sessionStorage.getItem(CHECKOUT_KEY) || 'null') || undefined;
+    } catch { /* El almacenamiento local es opcional para las operaciones del servidor. */ }
   }
 
   getOrders(): MemosOrder[] {
-    return [...this.ordersSubject.value].sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
+    const server = this.serverAccountId === this.accounts.user()?.id ? this.serverOrders : [];
+    const simulated = server.map(order => {
+      const cancellation = this.cancelledLocally[order.id];
+      return cancellation ? { ...order, ...cancellation, status: 'cancelado' as const } : order;
+    });
+    return [...simulated, ...this.localOrders].sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt));
   }
 
   getOrdersForUser(email: string): MemosOrder[] {
@@ -91,41 +108,70 @@ export class OrdersService {
     return (email ? this.getOrdersForUser(email) : this.getOrders()).find(order => order.id === id) || null;
   }
 
-  createOrder(payload: {
+  refresh(): Promise<void> {
+    const account = this.accounts.user();
+    if (!account) return Promise.resolve();
+    if (this.reload?.accountId === account.id) return this.reload.finished;
+    const finished = firstValueFrom(this.http.get<{ orders: MemosOrder[] }>('/api/orders', {
+      transferCache: false, timeout: 8000
+    })).then(({ orders }) => {
+      if (this.accounts.user()?.id !== account.id) return;
+      this.serverAccountId = account.id;
+      this.serverOrders = orders;
+      this.ordersSubject.next();
+    }).catch(async cause => {
+      if (cause instanceof HttpErrorResponse && cause.status === 401) await this.accounts.refresh();
+      throw cause;
+    }).finally(() => {
+      if (this.reload?.finished === finished) this.reload = undefined;
+    });
+    this.reload = { accountId: account.id, finished };
+    return finished;
+  }
+
+  async checkout(payload: {
     items: CartItem[];
     delivery: DeliveryData;
-    subtotal: number;
-    shippingCost: number;
     total: number;
     paymentMethod: PaymentMethod;
-    cardHolder?: string;
-    cardLast4?: string;
-    customer: OrderCustomer;
-  }): MemosOrder {
-    const now = new Date();
-    const seed = Math.floor(Math.random() * 9000) + 1000;
-    const order: MemosOrder = {
-      id: `ord-${now.getTime()}-${seed}`,
-      folio: `MEM-${now.getFullYear()}-${seed}`,
-      createdAt: now.toISOString(),
-      status: 'pagado',
-      items: payload.items.map(item => ({ ...item })),
-      delivery: { ...payload.delivery },
-      subtotal: payload.subtotal,
-      shippingCost: payload.shippingCost,
-      total: payload.total,
-      payment: {
-        receiptNumber: `RC-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${seed}`,
-        invoiceNumber: `FAC-${now.getFullYear()}-${seed}`,
-        paidAt: now.toLocaleString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
-        method: payload.paymentMethod,
-        cardHolder: payload.cardHolder,
-        cardLast4: payload.cardLast4
-      },
-      customer: { ...payload.customer }
+  }): Promise<MemosOrder> {
+    const accountId = this.accounts.user()?.id;
+    const { customerName, phone, address, neighborhood, specialInstructions } = payload.delivery;
+    const body = {
+      accountId,
+      items: payload.items.map(({ id, quantity }) => ({ sku: id, quantity })).sort((a, b) => a.sku.localeCompare(b.sku)),
+      delivery: { customerName, phone, address, neighborhood, specialInstructions },
+      expectedTotalCents: Math.round(payload.total * 100),
+      method: payload.paymentMethod === 'tarjeta' ? 'tarjeta_simulada' : 'efectivo',
+      termsVersion: TERMS_VERSION,
     };
-    this.persist([order, ...this.getOrders()]);
+    const bytes = new TextEncoder().encode(JSON.stringify(body));
+    const fingerprint = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)))
+      .map(value => value.toString(16).padStart(2, '0')).join('');
+    if (this.attempt?.fingerprint !== fingerprint) {
+      this.attempt = { fingerprint, id: crypto.randomUUID() };
+      this.storeAttempt();
+    }
+    const { order } = await firstValueFrom(this.http.post<{ order: MemosOrder }>('/api/orders', body, {
+      headers: { ...WRITE_HEADERS, 'Idempotency-Key': this.attempt.id },
+      timeout: 8000
+    }));
+    if (this.accounts.user()?.id === accountId) {
+      if (this.serverAccountId !== accountId) this.serverOrders = [];
+      this.serverAccountId = accountId;
+      this.serverOrders = [order, ...this.serverOrders.filter(existing => existing.id !== order.id)];
+      this.ordersSubject.next();
+    }
+    this.attempt = undefined;
+    this.storeAttempt();
     return order;
+  }
+
+  private storeAttempt(): void {
+    try {
+      if (this.attempt) sessionStorage.setItem(CHECKOUT_KEY, JSON.stringify(this.attempt));
+      else sessionStorage.removeItem(CHECKOUT_KEY);
+    } catch { /* La clave también se conserva en memoria mientras la página siga abierta. */ }
   }
 
   getCancellationRemainingMs(order: MemosOrder): number {
@@ -139,29 +185,34 @@ export class OrdersService {
     return status !== 'entregado' && status !== 'cancelado' && this.getCancellationRemainingMs(order) > 0;
   }
 
-  /** Operación local académica. Sin backend no autoriza ni ejecuta reembolsos bancarios. */
+  /** Simulación académica que solo afecta lo que se muestra en este navegador. */
   cancelOrder(id: string, email: string, reason: string, comment = ''): MemosOrder | null {
-    const orders = this.getOrders();
-    const index = orders.findIndex(order => order.id === id && order.customer?.email?.toLowerCase() === email.toLowerCase());
-    if (index < 0 || !reason.trim() || !this.canCancel(orders[index])) return null;
+    const order = this.getOrderById(id, email);
+    if (!order || !reason.trim() || !this.canCancel(order)) return null;
     const now = new Date().toISOString();
-    const method = orders[index].payment.method;
-    orders[index] = {
-      ...orders[index],
-      status: 'cancelado',
+    const cancellation: Cancellation = {
       cancelledAt: now,
       cancellationReason: reason.trim().slice(0, 160),
       cancellationComment: comment.trim().slice(0, 280),
-      refund: method === 'tarjeta'
-        ? { status: 'registrado', recordedAt: now, bankEstimate: 'Referencia informativa: de 5 a 10 días hábiles según el banco, en operaciones reales.' }
+      refund: order.payment.method === 'tarjeta'
+        ? { status: 'registrado', recordedAt: now }
         : { status: 'no-aplica', recordedAt: now }
     };
-    this.persist(orders);
-    return orders[index];
+    const cancelled: MemosOrder = { ...order, ...cancellation, status: 'cancelado' };
+    if (order.source === 'server') {
+      this.cancelledLocally[id] = cancellation;
+      localStorage.setItem(SIMULATIONS_KEY, JSON.stringify(this.cancelledLocally));
+    } else {
+      this.localOrders = this.localOrders.map(existing => existing.id === id ? cancelled : existing);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.localOrders));
+    }
+    this.ordersSubject.next();
+    return cancelled;
   }
 
   getEffectiveStatus(order: MemosOrder): OrderStatus {
     if (order.status === 'cancelado' || order.cancelledAt) return 'cancelado';
+    if (order.source === 'server') return order.status;
     const elapsedSeconds = (Date.now() - new Date(order.createdAt).getTime()) / 1000;
     if (elapsedSeconds < 20) return 'pagado';
     if (elapsedSeconds < 40) return 'preparando';

@@ -13,6 +13,7 @@ export const routes: Routes = [
   { path: 'tracker', loadComponent: () => import('./pages/tracker/tracker').then(m => m.Tracker) },
   { path: 'ajustes', loadComponent: () => import('./pages/settings/settings').then(m => m.Settings) },
   { path: 'mis-pedidos', loadComponent: () => import('./pages/my-orders/my-orders').then(m => m.MyOrders) },
+  { path: 'admin/pedidos', loadComponent: () => import('./pages/admin-orders/admin-orders').then(m => m.AdminOrders) },
   { path: 'legal/aviso', loadComponent: () => import('./pages/legal/legal').then(m => m.Legal), data: { section: 'aviso' } },
   { path: 'legal/devoluciones', loadComponent: () => import('./pages/legal/legal').then(m => m.Legal), data: { section: 'devoluciones' } },
   { path: 'legal/promociones', loadComponent: () => import('./pages/legal/legal').then(m => m.Legal), data: { section: 'promociones' } },
